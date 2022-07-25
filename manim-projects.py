@@ -53,13 +53,20 @@ class Derivative_Definition(Scene):
         orig_group.arrange(center=True)
         self.play(Write(orig_group))
         self.wait(2)
+        # Intermediate calculation step
+        limit_def_intermediate = MathTex(r"\frac{f(x+a) - f(x)}{(x-x) + a}")
+        limit_def_intermediate.next_to(limit_def)
+        group_inter = VGroup(limit_def, limit_def_intermediate)
+        group_inter.arrange(center=True)
+        self.play(Transform(orig_group, group_inter, replace_mobject_with_target_in_scene=True))
+        self.wait(2)
         # Talk about how this may be a bit daunting and connect it back to the definition of slope
         limit_def2 = MathTex(r"f'(x) = \lim_{a \to 0} ")
         limit_def2_part2 = MathTex(r"{", r"f", r"(x+a)", r" - ", r"f", r"(x)", r"}", r"\over", r"{", r"(x+a)", r" - ", r"(x)", r"}" , tex_to_color_map={"(x+a)": BLUE, "(x)": GREEN})
         limit_def2_part2.next_to(limit_def2)
         group = VGroup(limit_def2, limit_def2_part2)
         group.arrange(center=True)
-        self.play(Transform(orig_group, group))
-        self.wait(1)
+        self.play(Transform(group_inter, group, replace_mobject_with_target_in_scene=True), runtime=3)
+        self.wait(2)
 
 
