@@ -107,8 +107,20 @@ class Derivative_Definition(Scene):
         self.play(GrowFromCenter(y1_brace), Write(y1_brace_text))
         self.play(GrowFromCenter(x2_brace), Write(x2_brace_text))
         self.play(GrowFromCenter(x1_brace), Write(x1_brace_text))
-
         self.wait(2)
+
         # Shrink the group and put it to the side
+        entire_formula = VGroup(limit_def2, text_change_color, x1_brace, x1_brace_text, x2_brace, x2_brace_text, y1_brace, y1_brace_text, y_brace, y_brace_text)
+        entire_formula.save_state()
+        self.play(entire_formula.animate.to_edge(LEFT).scale(0.625))
+        formula_title = Text('Derivative Formula').scale(0.7).to_edge(LEFT).shift(UP*1.85 + RIGHT*1.5)
+        ul = Underline(formula_title)
+        self.play(Write(formula_title))
+        self.play(Write(ul))
+        self.wait(2)
+
+        # Write the slope formula here on the right side and compare the 2
+        
+
 
 
