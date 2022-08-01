@@ -15,3 +15,12 @@ Where {ClassName} refers to the names of the classes in the python file. The ani
 ## Animations created so far
 * Reimann Sum Example
 * Definition of a Derivative
+
+(Video Previews are attached below)
+
+
+https://user-images.githubusercontent.com/55731604/182051526-b1037ca5-29ba-401f-be07-7ddb452b5df3.mp4
+
+
+https://user-images.githubusercontent.com/55731604/182051494-bd3d063a-a093-40e2-bef5-3748206a4578.mp4
+
