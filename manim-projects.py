@@ -1,5 +1,5 @@
 from cmath import sin
-from tkinter import CENTER, TOP
+from tkinter import BOTTOM, CENTER, TOP
 from typing_extensions import runtime
 from manim import *
 from matplotlib import mathtext
@@ -120,6 +120,21 @@ class Derivative_Definition(Scene):
         self.wait(2)
 
         # Write the slope formula here on the right side and compare the 2
+        slope_formula = MathTex(r"{Slope}",  r"=",  r"{Rise \over Run}")
+        slope_formula.to_edge(RIGHT).shift(LEFT*1.5 + UP*1)
+        slope_title = Text('Slope Formula').scale(0.7).next_to(slope_formula, UP).shift(UP*0.25)
+        ul_slope = Underline(slope_title)
+        self.play(Write(slope_title))
+        self.play(Write(ul_slope))
+        self.play(Write(slope_formula))
+        self.wait(2)
+
+        # move brace text into the slope formula to show connection
+        other_slope_formula = MathTex(r'{Slope}', r'=', r'{', r'Y_2', r'-', r'Y_1', r'\over', r'X_2', r'-', r'X_1', r'}', tex_to_color_map={'Y_2':BLUE, 'Y_1':GREEN, 'X_1':GREEN, 'X_2': BLUE})
+        other_slope_formula.next_to(slope_formula, DOWN)
+        group_copy = Group(y1_brace_text, y_brace_text, x1_brace_text, x2_brace_text).copy()
+        self.play(TransformMatchingTex(group_copy, other_slope_formula), run_time=2)
+        self.wait(2)
         
 
 
