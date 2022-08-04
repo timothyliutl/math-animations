@@ -135,7 +135,51 @@ class Derivative_Definition(Scene):
         group_copy = Group(y1_brace_text, y_brace_text, x1_brace_text, x2_brace_text).copy()
         self.play(TransformMatchingTex(group_copy, other_slope_formula), run_time=2)
         self.wait(2)
+
+class Power_Rule(Scene):
+    def construct(self):
+        intro_text = Text('Derivation of Power Rule')
+        self.play(Write(intro_text))
+        self.wait(2)
+        self.play(Unwrite(intro_text, reverse=False))
+
+        formula_title = Text('Limit Definition of a Derivative').scale(0.625).to_edge(UP)
+        underline_formula_title = Underline(formula_title)
+        # Stick to either single or double quotes, also don't need to break things up if we are just mapping text to color
+        derivative_formula = MathTex(r"\frac{d}{dx} f(x) = \lim_{a \to 0} { f(x+a) - f(x) \over a }")
+        derivative_formula = MathTex(r"\frac{d}{dx}", r"f(x)", r"=", r"\lim_{a \to 0}")
+        derivative_formula_right = MathTex(r"f(x+a)", r"-" ,r"f(x)", r"\over", r"a")
+        derivative_formula.next_to(formula_title, DOWN)
+        derivative_formula_right.next_to(derivative_formula, RIGHT)
+        derivative_formula2 = MathTex(r"\frac{d}{dx}", r"x^n", r"=", r"\lim_{a \to 0}", r"{", r"(x+a)^n", r"-" ,r"x^n", r"\over", r"a", r"}")
+        derivative_formula2.next_to(formula_title, DOWN)
+        group = VGroup(derivative_formula, derivative_formula_right)
+        group.arrange(center=True)
+        group.next_to(formula_title, DOWN)
+        self.play(Write(formula_title))
+        self.play(Write(underline_formula_title))
+        self.wait(2)
+        self.play(Write(group))
+        self.wait(2)
+        self.play(TransformMatchingTex(group, derivative_formula2))
+        self.wait(2)
+        copy_df2 = derivative_formula2.copy()
+        copy_df2.next_to(derivative_formula2, DOWN)
+        copy_df2.shift(DOWN * 0.5)
+        self.play(Transform(derivative_formula2, copy_df2))
+        braces_polynomial = Brace(copy_df2[5], UP)
+        # Change the color of the exponent and brace to emphasize what we are focusing on
+        brace_text = braces_polynomial.get_text('Expand with Binomial Theorem')
+        self.play(GrowFromCenter(braces_polynomial))
+        self.play(Write(brace_text))
+
+        self.wait(2)
+
+
+
         
 
 
-
+class Graphing_Example(Scene):
+    def construct(self):
+        pass
