@@ -3,6 +3,7 @@ from tkinter import BOTTOM, CENTER, TOP
 from typing_extensions import runtime
 from manim import *
 from matplotlib import mathtext
+from sympy import binomial
 
 class Riemann_Sum(Scene):
     def construct(self):
@@ -172,12 +173,29 @@ class Power_Rule(Scene):
         brace_text = braces_polynomial.get_text('Expand with Binomial Theorem')
         self.play(GrowFromCenter(braces_polynomial))
         self.play(Write(brace_text))
-
         self.wait(2)
 
-
-
+        # binomial expansion
+        brace_text2 = braces_polynomial.get_tex(r'x^n + \binom{n}{1} x^{n-1}a^1 + \binom{n}{2} x^{n-2}a^2 + \binom{n}{n-3}x^{n-3}a^3 + ...').scale(0.6).shift(DOWN*0.2)
+        self.play(FadeTransform(brace_text, brace_text2))
+        brace_group = VGroup(brace_text2, braces_polynomial, derivative_formula2)
+        formula = MathTex(r'\frac{d}{dx} f(x) = \lim_{a \to 0} \frac{(x^n + \binom{n}{1} x^{n-1}a^1 + \binom{n}{2} x^{n-2}a^2 + \binom{n}{n-3}x^{n-3}a^3 + ...) - x^n}{a}')
+        formula.to_edge(UP)
+        formula.shift(DOWN*0.5).scale(0.7)
+        self.play(FadeTransform(brace_group, formula))
+        self.wait(2)
+        formula2 = MathTex(r'\frac{d}{dx} f(x) = \lim_{a \to 0} \frac{x^n - x^n + \binom{n}{1} x^{n-1}a^1 + \binom{n}{2} x^{n-2}a^2 + \binom{n}{n-3}x^{n-3}a^3 + ...}{a}')
+        formula3 =MathTex(r'\frac{d}{dx} f(x) = \lim_{a \to 0} \frac{\binom{n}{1} x^{n-1}a^1 + \binom{n}{2} x^{n-2}a^2 + \binom{n}{n-3}x^{n-3}a^3 + ...}{a}')
+        formula2.to_edge(UP).shift(DOWN*0.5)
+        formula3.to_edge(UP).shift(DOWN*0.5)
+        formula2.scale(0.7)
+        formula3.scale(0.7)
         
+        self.play(TransformMatchingShapes(formula, formula2))
+        self.wait(2)
+        self.play(TransformMatchingShapes(formula2, formula3))
+        self.wait(2)
+        # To be worked on later, formula derivations don't really seem to be worth my time right now
 
 
 class Graphing_Example(Scene):
