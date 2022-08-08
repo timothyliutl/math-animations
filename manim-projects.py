@@ -201,3 +201,48 @@ class Power_Rule(Scene):
 class Graphing_Example(Scene):
     def construct(self):
         pass
+
+class Example_Problem(Scene):
+    def construct(self):
+        # Structure of animation
+        # Explain the problem and colorize each parametric equation
+        # Explain the difference between intersection and collision with a 2d example
+        # First remove a dimension and talk about the problem in a 2d setting
+        # Answer both questions with that context
+        # Bring back the 3 dimensions and answer the question again 
+        # Do a 3 graph, then do a separate graph for each dimension
+
+        title = Text('Week 2 Question 8 Explanation')
+        self.play(Write(title))
+        self.wait(2)
+        self.play(Unwrite(title, reverse=False))
+        self.wait(1)
+        question = ImageMobject('media/images/IMG_8856E74ECEEE-1.jpeg')
+        question.to_edge(UP, buff=0.5).scale(0.5)
+        self.play(FadeIn(question))
+        self.wait(2)
+        self.play(FadeOut(question))
+        self.wait(2)
+
+        # Explain the difference between collision and intersection
+        subsection_title1 = Text('Collision vs Intersection').scale(0.8).to_edge(UP)
+        ul = Underline(subsection_title1)
+        self.play(Write(subsection_title1))
+        self.play(Write(ul))
+        collision_def = Text(r'Collision: When the paths of 2 objects intersect at the same time', t2c={'intersect at the same time': RED}).scale(0.7)
+        intersection_def = Text(r'Intersection: When the paths of 2 objects intersect').scale(0.7)
+        collision_def.next_to(ul, DOWN)
+        intersection_def.next_to(collision_def, DOWN)
+        self.play(Write(collision_def))
+        self.play(Write(intersection_def))
+
+
+        parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>')
+        parametric_equation2 = MathTex(r'r_2(t)', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>')
+
+        parametric_equation1.to_edge(UP)
+        parametric_equation2.next_to(parametric_equation1, DOWN)
+        
+        #self.play(Write(parametric_equation1))
+        #self.play(Write(parametric_equation2))
+        self.wait(2)
