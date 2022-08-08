@@ -229,16 +229,41 @@ class Example_Problem(Scene):
         ul = Underline(subsection_title1)
         self.play(Write(subsection_title1))
         self.play(Write(ul))
-        collision_def = Text(r'Collision: When the paths of 2 objects intersect at the same time', t2c={'intersect at the same time': RED}).scale(0.7)
-        intersection_def = Text(r'Intersection: When the paths of 2 objects intersect').scale(0.7)
+        collision_def = Paragraph(r'Collision: When the paths of 2 objects intersect at the same time', t2c={'intersect at the same time': RED}).scale(0.7)
+        intersection_def = Paragraph('Intersection: When the paths of 2 objects intersect at different \n or the same time', t2c={'intersect at different \n or the same time': BLUE}, alignment='left').scale(0.7)
         collision_def.next_to(ul, DOWN)
         intersection_def.next_to(collision_def, DOWN)
+        intersection_def.to_edge(LEFT)
+        collision_def.to_edge(LEFT)
         self.play(Write(collision_def))
         self.play(Write(intersection_def))
+        self.wait(5)
+        self.play(Unwrite(subsection_title1, reverse=False), Unwrite(ul, reverse=False), Unwrite(collision_def, reverse=False), Unwrite(intersection_def, reverse=False))
+        self.wait(2)
+
+        subsection_title2 = Text('Intersection Example').scale(0.7)
+        subsection_title2.to_corner(LEFT+UP)
+        ul2 = Underline(subsection_title2)
+        self.play(Write(subsection_title2))
+        self.play(Write(ul2))
+        # Now go into examples of collisions and intersections
+        # Make sure to emphasize the differences and how collision is a subset of intersection (stricter definition)
+        plane = NumberPlane(
+           x_range=(-2,10,2),
+           y_range=(-3,15,3),
+           x_length=10,
+           y_length=5, 
+           axis_config={"include_numbers": True, 'include_tip':True}
+        ).to_edge(DOWN)
+        self.play(DrawBorderThenFill(plane))
+
+        # Graph 2 parametric equations that intersect paths but do not collide
+        # Adding value tracker that will be the updated value of time
+        e = ValueTracker(0)
 
 
         parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>')
-        parametric_equation2 = MathTex(r'r_2(t)', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>')
+        parametric_equation2 = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>')
 
         parametric_equation1.to_edge(UP)
         parametric_equation2.next_to(parametric_equation1, DOWN)
