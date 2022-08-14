@@ -242,25 +242,58 @@ class Example_Problem(Scene):
         self.wait(2)
 
         subsection_title2 = Text('Intersection Example').scale(0.7)
-        subsection_title2.to_corner(LEFT+UP)
+        subsection_title2.to_edge(LEFT+UP)
         ul2 = Underline(subsection_title2)
         self.play(Write(subsection_title2))
         self.play(Write(ul2))
         # Now go into examples of collisions and intersections
         # Make sure to emphasize the differences and how collision is a subset of intersection (stricter definition)
-        plane = NumberPlane(
+        e2 = ValueTracker(0.01)
+        plane1 = NumberPlane(
            x_range=(-2,10,2),
            y_range=(-3,15,3),
-           x_length=10,
+           x_length=5,
            y_length=5, 
            axis_config={"include_numbers": True, 'include_tip':True}
-        ).to_edge(DOWN)
-        self.play(DrawBorderThenFill(plane))
-
+        ).to_edge(LEFT)
+        self.play(DrawBorderThenFill(plane1))
+        graph_intersection1 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [t, t**2], t_range=[0, e2.get_value()]).set_color(BLUE))
+        graph_intersection1_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(graph_intersection1.get_end()))
+        graph_intersection2 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [1+2*t, 1+6*t], t_range=[0, e2.get_value()]).set_color(RED))
+        graph_intersection2_dot = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(graph_intersection2.get_end()))
+        self.add(graph_intersection1, graph_intersection2)
+        self.add(graph_intersection1_dot, graph_intersection2_dot)
         # Graph 2 parametric equations that intersect paths but do not collide
         # Adding value tracker that will be the updated value of time
-        e = ValueTracker(0)
+        self.play(e2.animate.set_value(2), run_time=3, rate_func=smooth)
+        self.wait(0.5)
+        intersection_dot1 = Dot(fill_color=WHITE).scale(0.8).move_to(graph_intersection1.get_end())
+        self.play(FadeIn(intersection_dot1))
+        self.play(e2.animate.set_value(2.2), run_time=1, rate_func=smooth)
 
+        subsection_title3 = Text('Collision Example').scale(0.7).to_edge(RIGHT + UP).shift(LEFT)
+        ul3 = Underline(subsection_title3)
+        self.play(Write(subsection_title3))
+        self.play(Write(ul3))
+        plane2 = NumberPlane(
+           x_range=(-2,10,2),
+           y_range=(-3,15,3),
+           x_length=5,
+           y_length=5, 
+           axis_config={"include_numbers": True, 'include_tip':True}
+        ).to_edge(RIGHT)
+        self.play(DrawBorderThenFill(plane2))
+        e = ValueTracker(0.01)
+        graph_collision1 = always_redraw(lambda: plane2.plot_parametric_curve(lambda t: [t**2 + 1, t + 2], t_range=[0, e.get_value()]).set_color(BLUE))
+        graph_collision2 = always_redraw(lambda: plane2.plot_parametric_curve(lambda t: [t+3, 3*t-2], t_range=[0, e.get_value()]).set_color(RED))
+        graph_collision1_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(graph_collision1.get_end()))
+        graph_collision2_dot = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(graph_collision2.get_end()))
+        self.add(graph_collision1, graph_collision2, graph_collision1_dot, graph_collision2_dot)
+        self.play(e.animate.set_value(2), run_time=3, rate_func=smooth)
+        intersection_dot2 = Dot(fill_color=WHITE).scale(0.8).move_to(graph_collision1.get_end())
+        self.play(FadeIn(intersection_dot2))
+        self.wait(0.5)
+        self.play(e.animate.set_value(2.5), run_time=3, rate_func=smooth)
 
         parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>')
         parametric_equation2 = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>')
