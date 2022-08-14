@@ -254,22 +254,30 @@ class Example_Problem(Scene):
            y_range=(-3,15,3),
            x_length=5,
            y_length=5, 
-           axis_config={"include_numbers": True, 'include_tip':True}
+           axis_config={"include_numbers": True, 'include_tip':True},
+           background_line_style={'stroke_color': GREEN}
         ).to_edge(LEFT)
         self.play(DrawBorderThenFill(plane1))
-        graph_intersection1 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [t, t**2], t_range=[0, e2.get_value()]).set_color(BLUE))
+        graph_intersection1 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [t+1, t], t_range=[0, e2.get_value()]).set_color(BLUE))
         graph_intersection1_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(graph_intersection1.get_end()))
-        graph_intersection2 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [1+2*t, 1+6*t], t_range=[0, e2.get_value()]).set_color(RED))
+        graph_intersection2 = always_redraw(lambda: plane1.plot_parametric_curve(lambda t: [t, t**0.5], t_range=[0, e2.get_value()]).set_color(RED))
         graph_intersection2_dot = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(graph_intersection2.get_end()))
+        eq1_int = MathTex(r'r_1(t) = ', r'<', r't+1', r',', r't', r'>').set_color(BLUE).scale(0.7)
+        eq2_int = MathTex(r'r_2(t) = ',r'<', r't', r',', r'\sqrt{t}', r'>').set_color(RED).scale(0.7)
+        eq1_int.next_to(plane1, UP).shift(DOWN)
+        eq2_int.next_to(eq1_int, DOWN)
+        self.play(Write(eq1_int), Write(eq2_int))
         self.add(graph_intersection1, graph_intersection2)
         self.add(graph_intersection1_dot, graph_intersection2_dot)
+
         # Graph 2 parametric equations that intersect paths but do not collide
         # Adding value tracker that will be the updated value of time
-        self.play(e2.animate.set_value(2), run_time=3, rate_func=smooth)
+        self.play(e2.animate.set_value(2.618), run_time=3, rate_func=smooth)
         self.wait(0.5)
-        intersection_dot1 = Dot(fill_color=WHITE).scale(0.8).move_to(graph_intersection1.get_end())
+        intersection_dot1 = Dot(fill_color=WHITE).scale(0.8).move_to(graph_intersection2.get_end())
         self.play(FadeIn(intersection_dot1))
-        self.play(e2.animate.set_value(2.2), run_time=1, rate_func=smooth)
+        self.play(e2.animate.set_value(4), run_time=3, rate_func=smooth)
+        
 
         subsection_title3 = Text('Collision Example').scale(0.7).to_edge(RIGHT + UP).shift(LEFT)
         ul3 = Underline(subsection_title3)
@@ -280,7 +288,8 @@ class Example_Problem(Scene):
            y_range=(-3,15,3),
            x_length=5,
            y_length=5, 
-           axis_config={"include_numbers": True, 'include_tip':True}
+           axis_config={"include_numbers": True, 'include_tip':True},
+           background_line_style={'stroke_color': GREEN}
         ).to_edge(RIGHT)
         self.play(DrawBorderThenFill(plane2))
         e = ValueTracker(0.01)
@@ -288,6 +297,12 @@ class Example_Problem(Scene):
         graph_collision2 = always_redraw(lambda: plane2.plot_parametric_curve(lambda t: [t+3, 3*t-2], t_range=[0, e.get_value()]).set_color(RED))
         graph_collision1_dot = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(graph_collision1.get_end()))
         graph_collision2_dot = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(graph_collision2.get_end()))
+        eq1_coll = MathTex(r'r_1(t) = ' ,r'<', r't^2', r',', r't+2', r'>').set_color(BLUE).scale(0.7)
+        eq2_coll = MathTex(r'r_2(t) = ',r'<', r't+3', r',', r'3t-2', r'>').set_color(RED).scale(0.7)
+        eq1_coll.next_to(plane2, UP).shift(DOWN)
+        eq2_coll.next_to(eq1_coll, DOWN)
+        self.play(Write(eq1_coll), Write(eq2_coll))
+
         self.add(graph_collision1, graph_collision2, graph_collision1_dot, graph_collision2_dot)
         self.play(e.animate.set_value(2), run_time=3, rate_func=smooth)
         intersection_dot2 = Dot(fill_color=WHITE).scale(0.8).move_to(graph_collision1.get_end())
