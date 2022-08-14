@@ -15,6 +15,7 @@ Where {ClassName} refers to the names of the classes in the python file. The ani
 ## Animations created so far
 * Reimann Sum Example
 * Definition of a Derivative
+* APSC 171 tutorial Example (Work in progress)
 
 (Video Previews are attached below)
 
@@ -23,4 +24,7 @@ https://user-images.githubusercontent.com/55731604/182051526-b1037ca5-29ba-401f-
 
 
 https://user-images.githubusercontent.com/55731604/182051494-bd3d063a-a093-40e2-bef5-3748206a4578.mp4
+
+
+https://user-images.githubusercontent.com/55731604/184524301-d24788fb-7310-406b-b1d0-f3eefe60e9d2.mp4
 
