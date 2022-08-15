@@ -266,7 +266,10 @@ class Example_Problem(Scene):
         eq2_int = MathTex(r'r_2(t) = ',r'<', r't', r',', r'\sqrt{t}', r'>').set_color(RED).scale(0.8).set_stroke(width=0.5,color=WHITE)
         eq1_int.next_to(plane1, UP).shift(DOWN)
         eq2_int.next_to(eq1_int, DOWN)
-        self.play(Write(eq1_int), Write(eq2_int))
+        t_text = Text('t = ')
+        t_text.next_to(eq2_int, DOWN)
+        var1 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e2.get_value()).next_to(t_text, RIGHT))
+        self.play(Write(eq1_int), Write(eq2_int), Write(var1), Write(t_text))
         self.add(graph_intersection1, graph_intersection2)
         self.add(graph_intersection1_dot, graph_intersection2_dot)
 
@@ -301,7 +304,9 @@ class Example_Problem(Scene):
         eq2_coll = MathTex(r'r_2(t) = ',r'<', r't+3', r',', r'3t-2', r'>').set_color(RED).scale(0.6).set_stroke(width=0.5,color=WHITE)
         eq1_coll.next_to(plane2, UP).shift(DOWN)
         eq2_coll.next_to(eq1_coll, DOWN)
-        self.play(Write(eq1_coll), Write(eq2_coll))
+        t2_text = Text('t = ').next_to(eq2_coll, DOWN)
+        var2 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e.get_value()).next_to(t2_text, RIGHT))
+        self.play(Write(eq1_coll), Write(eq2_coll), Write(var2), Write(t2_text))
 
         self.add(graph_collision1, graph_collision2, graph_collision1_dot, graph_collision2_dot)
         self.play(e.animate.set_value(2), run_time=3, rate_func=smooth)
