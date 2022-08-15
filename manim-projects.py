@@ -266,9 +266,9 @@ class Example_Problem(Scene):
         eq2_int = MathTex(r'r_2(t) = ',r'<', r't', r',', r'\sqrt{t}', r'>').set_color(RED).scale(0.8).set_stroke(width=0.5,color=WHITE)
         eq1_int.next_to(plane1, UP).shift(DOWN)
         eq2_int.next_to(eq1_int, DOWN)
-        t_text = Text('t = ')
+        t_text = Text('t = ').scale(0.7)
         t_text.next_to(eq2_int, DOWN)
-        var1 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e2.get_value()).next_to(t_text, RIGHT))
+        var1 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e2.get_value()).next_to(t_text, RIGHT).scale(0.7))
         self.play(Write(eq1_int), Write(eq2_int), Write(var1), Write(t_text))
         self.add(graph_intersection1, graph_intersection2)
         self.add(graph_intersection1_dot, graph_intersection2_dot)
@@ -304,8 +304,8 @@ class Example_Problem(Scene):
         eq2_coll = MathTex(r'r_2(t) = ',r'<', r't+3', r',', r'3t-2', r'>').set_color(RED).scale(0.6).set_stroke(width=0.5,color=WHITE)
         eq1_coll.next_to(plane2, UP).shift(DOWN)
         eq2_coll.next_to(eq1_coll, DOWN)
-        t2_text = Text('t = ').next_to(eq2_coll, DOWN)
-        var2 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e.get_value()).next_to(t2_text, RIGHT))
+        t2_text = Text('t = ').next_to(eq2_coll, DOWN).scale(0.7)
+        var2 = always_redraw(lambda: DecimalNumber(num_decimal_places=3).set_value(e.get_value()).next_to(t2_text, RIGHT).scale(0.7))
         self.play(Write(eq1_coll), Write(eq2_coll), Write(var2), Write(t2_text))
 
         self.add(graph_collision1, graph_collision2, graph_collision1_dot, graph_collision2_dot)
@@ -328,4 +328,49 @@ class Example_Problem(Scene):
 # start of second part of tutorial question walk through
 class Example_Problem2(Scene):
     def construct(self):
-        pass
+        # go back to the original problem
+        # first remove the z dimension from the problem and see if there is a collision or intersection on the x-y plane
+        # afterwards bring back the z dimension and do a 3d graph
+        # then graph each dimension separately
+        # show how to set up the equations
+        # show results and answers
+
+        back_text = Text('Now back to the problem...').scale(0.8)
+        self.play(Write(back_text))
+        self.wait(2)
+        self.play(Unwrite(back_text, reverse=False))
+
+        parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>').set_color(BLUE)
+        parametric_equation2 = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>').set_color(RED)
+
+        parametric_equation1_edited = MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r'>').set_color(BLUE)
+        parametric_equation2_edited = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r'>').set_color(RED)
+        parametric_equation1.to_edge(UP)
+        parametric_equation2.next_to(parametric_equation1, DOWN)
+        parametric_equation1_edited.to_edge(UP)
+        parametric_equation2_edited.next_to(parametric_equation1_edited, DOWN)
+        cross1 = Cross(parametric_equation1[7])
+        cross2 = Cross(parametric_equation2[7])
+
+        self.play(Write(parametric_equation1), Write(parametric_equation2))
+        self.wait(1)
+        self.play(DrawBorderThenFill(cross1), DrawBorderThenFill(cross2))
+        self.wait(2)
+        self.play(TransformMatchingTex(parametric_equation1, parametric_equation1_edited), TransformMatchingTex(parametric_equation2, parametric_equation2_edited), FadeOut(cross1), FadeOut(cross2), run_time=2)
+        self.wait(2)
+        # shrink equations and bring to side
+        # add graph of the new 2d parametric equations
+        group = VGroup(parametric_equation1_edited, parametric_equation2_edited)
+        graph = NumberPlane(
+           x_range=(-2,20,2),
+           y_range=(-3,15,3),
+           x_length=8,
+           y_length=5, 
+           axis_config={"include_numbers": True, 'include_tip':True},
+           background_line_style={'stroke_color': GREEN}
+           ).to_edge(RIGHT)
+        self.play(group.animate.scale(0.7).to_edge(LEFT))
+        self.play(DrawBorderThenFill(graph))
+        
+
+        
