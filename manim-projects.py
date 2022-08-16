@@ -362,8 +362,8 @@ class Example_Problem2(Scene):
         # add graph of the new 2d parametric equations
         group = VGroup(parametric_equation1_edited, parametric_equation2_edited)
         graph = NumberPlane(
-           x_range=(-2,20,2),
-           y_range=(-3,15,3),
+           x_range=(-10,15,2),
+           y_range=(-10,15,2),
            x_length=8,
            y_length=5, 
            axis_config={"include_numbers": True, 'include_tip':True},
@@ -371,6 +371,32 @@ class Example_Problem2(Scene):
            ).to_edge(RIGHT)
         self.play(group.animate.scale(0.7).to_edge(LEFT))
         self.play(DrawBorderThenFill(graph))
+
+        e = ValueTracker(0.001)
+        parametric1 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [t**2, 7*t - 12], t_range=[0, e.get_value()]).set_color(BLUE))
+        parametric2 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [4*t-3, t**2], t_range=[0, e.get_value()]).set_color(RED))
+        dot1 = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(parametric1.get_end()))
+        dot2 = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(parametric2.get_end()))
+        self.play(DrawBorderThenFill(parametric1), DrawBorderThenFill(parametric2), FadeIn(dot1), FadeIn(dot2))
+        time_text = Text('t = ').scale(0.7).next_to(group, DOWN)
+        time_var = always_redraw(lambda: DecimalNumber(2).set_value(e.get_value()).scale(0.7).next_to(time_text, RIGHT))
+        self.play(Write(time_text), Write(time_var))
+        self.play(e.animate.set_value(4), run_time=5)
         
+        # create a table with important points and corresponding times
+        # color code the dots on the graphs with the times on the table
+
+        time_table = MathTable([['t', 'r_1(t)', 'r_2(t)'], ['3','(9,9)', '(9,9)']], include_outer_lines=True).next_to(time_text, DOWN).scale(0.65)
+        # setting colors in table
+        column1 = time_table.get_columns()[1]
+        column2 = time_table.get_columns()[2]
+        for text in column1:
+            text.set_color(BLUE).scale(1.1)
+        for text in column2:
+            text.set_color(RED).scale(1.1)
+
+        self.play(FadeIn(time_table))
+        self.wait(2)
+
 
         
