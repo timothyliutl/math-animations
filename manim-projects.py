@@ -381,13 +381,8 @@ class Example_Problem2(Scene):
         time_text = Text('t = ').scale(0.7).next_to(group, DOWN)
         time_var = always_redraw(lambda: DecimalNumber(2).set_value(e.get_value()).scale(0.7).next_to(time_text, RIGHT))
         self.play(Write(time_text), Write(time_var))
-        self.play(e.animate.set_value(4), run_time=5)
+        time_table = MathTable([['t', 'r_1(t)', 'r_2(t)'], ['3', '(9,9)', '(9,9)']], include_outer_lines=True).next_to(time_text, DOWN).scale(0.65)
         
-        # create a table with important points and corresponding times
-        # color code the dots on the graphs with the times on the table
-
-        time_table = MathTable([['t', 'r_1(t)', 'r_2(t)'], ['3','(9,9)', '(9,9)']], include_outer_lines=True).next_to(time_text, DOWN).scale(0.65)
-        # setting colors in table
         column1 = time_table.get_columns()[1]
         column2 = time_table.get_columns()[2]
         for text in column1:
@@ -395,8 +390,16 @@ class Example_Problem2(Scene):
         for text in column2:
             text.set_color(RED).scale(1.1)
 
-        self.play(FadeIn(time_table))
+        self.play(FadeIn(time_table.get_rows()[0]), FadeIn(time_table.get_horizontal_lines()), FadeIn(time_table.get_vertical_lines()))
+        self.play(e.animate.set_value(3), run_time=5)
+        
+        # create a table with important points and corresponding times
+        # color code the dots on the graphs with the times on the table
+       
+
+        # setting colors in table
         self.wait(2)
+        self.play(FadeIn(time_table.get_rows()[1]))
 
 
         
