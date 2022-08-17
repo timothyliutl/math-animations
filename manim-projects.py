@@ -343,14 +343,14 @@ class Example_Problem2(Scene):
         parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>').set_color(BLUE)
         parametric_equation2 = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>').set_color(RED)
 
-        parametric_equation1_edited = MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r'>').set_color(BLUE)
-        parametric_equation2_edited = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r'>').set_color(RED)
+        parametric_equation1_edited = MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r't^2', r'>').set_color(BLUE)
+        parametric_equation2_edited = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r'5t-6', r'>').set_color(RED)
         parametric_equation1.to_edge(UP)
         parametric_equation2.next_to(parametric_equation1, DOWN)
         parametric_equation1_edited.to_edge(UP)
         parametric_equation2_edited.next_to(parametric_equation1_edited, DOWN)
-        cross1 = Cross(parametric_equation1[7])
-        cross2 = Cross(parametric_equation2[7])
+        cross1 = Cross(parametric_equation1[5])
+        cross2 = Cross(parametric_equation2[5])
 
         self.play(Write(parametric_equation1), Write(parametric_equation2))
         self.wait(1)
@@ -372,16 +372,16 @@ class Example_Problem2(Scene):
         self.play(group.animate.scale(0.7).to_edge(LEFT))
         self.play(DrawBorderThenFill(graph))
 
-        e = ValueTracker(0.001)
-        parametric1 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [t**2, 7*t - 12], t_range=[0, e.get_value()]).set_color(BLUE))
-        parametric2 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [4*t-3, t**2], t_range=[0, e.get_value()]).set_color(RED))
+        e = ValueTracker(0)
+        parametric1 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [t**2, t**2], t_range=[0, max(0.1,e.get_value())]).set_color(BLUE))
+        parametric2 = always_redraw(lambda: graph.plot_parametric_curve(lambda t: [4*t-3, 5*t-6], t_range=[0, max(0.1,e.get_value())]).set_color(RED))
         dot1 = always_redraw(lambda: Dot(fill_color=BLUE).scale(0.7).move_to(parametric1.get_end()))
         dot2 = always_redraw(lambda: Dot(fill_color=RED).scale(0.7).move_to(parametric2.get_end()))
-        self.play(DrawBorderThenFill(parametric1), DrawBorderThenFill(parametric2), FadeIn(dot1), FadeIn(dot2))
+        self.play(FadeIn(parametric1), FadeIn(parametric2), FadeIn(dot1), FadeIn(dot2))
         time_text = Text('t = ').scale(0.7).next_to(group, DOWN)
         time_var = always_redraw(lambda: DecimalNumber(2).set_value(e.get_value()).scale(0.7).next_to(time_text, RIGHT))
         self.play(Write(time_text), Write(time_var))
-        time_table = MathTable([['t', 'r_1(t)', 'r_2(t)'], ['3', '(9,9)', '(9,9)']], include_outer_lines=True).next_to(time_text, DOWN).scale(0.65)
+        time_table = MathTable([['t', 'r_1(t)', 'r_2(t)'],['1', '(1,1)','(1,-1)'],['2', '(4,4)', '(5, 4)'], ['3', '(9,9)', '(9,9)'], ['4', '(16,16)', '(13,14)']], include_outer_lines=True).next_to(time_text, DOWN).scale(0.65).shift(UP*0.5)
         
         column1 = time_table.get_columns()[1]
         column2 = time_table.get_columns()[2]
@@ -391,15 +391,26 @@ class Example_Problem2(Scene):
             text.set_color(RED).scale(1.1)
 
         self.play(FadeIn(time_table.get_rows()[0]), FadeIn(time_table.get_horizontal_lines()), FadeIn(time_table.get_vertical_lines()))
-        self.play(e.animate.set_value(3), run_time=5)
+
+        for i in range(1,5):
+            self.play(e.animate.set_value(i), run_time=2)
+            self.play(FadeIn(time_table.get_rows()[i]))
+            new_dot1 = Dot(fill_color=BLUE).move_to(parametric1.get_end())
+            new_dot2 = Dot(fill_color=RED).move_to(parametric2.get_end())
+            self.play(FadeIn(new_dot1), FadeIn(new_dot2))
         
         # create a table with important points and corresponding times
         # color code the dots on the graphs with the times on the table
-       
-
+        # add dot at collision point
+        # add time label at collision point
+        box = SurroundingRectangle(time_table.get_rows()[3])
+        self.play(Create(box))
         # setting colors in table
         self.wait(2)
-        self.play(FadeIn(time_table.get_rows()[1]))
+#3D animation of the graph, then graphing x, y, z separately
+class Example_Problem3(Scene):
+    def construct(self):
+        pass
 
 
         
