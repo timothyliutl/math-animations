@@ -4,6 +4,7 @@ from typing_extensions import runtime
 from manim import *
 from matplotlib import mathtext
 from sympy import binomial
+import numpy as np
 
 class Riemann_Sum(Scene):
     def construct(self):
@@ -409,8 +410,71 @@ class Example_Problem2(Scene):
         self.wait(2)
 #3D animation of the graph, then graphing x, y, z separately
 class Example_Problem3(Scene):
+    # do a 3d graph of the parametric equations
     def construct(self):
-        pass
+        parametric_equation1= MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r'7t-12', r',', r't^2', r'>').set_color(BLUE)
+        parametric_equation2 = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r't^2', r',', r'5t-6', r'>').set_color(RED)
+        parametric_equation1.to_edge(UP)
+        parametric_equation2.next_to(parametric_equation1, DOWN)
+
+        parametric_equation1_edited = MathTex(r'r_1(t)', r'=', r'<', r't^2', r',', r't^2', r'>').set_color(BLUE)
+        parametric_equation2_edited = MathTex(r'r_2(t)', r'=', r'<', r'4t-3', r',', r'5t-6', r'>').set_color(RED)
+        parametric_equation1_edited.to_edge(UP)
+        parametric_equation2_edited.next_to(parametric_equation1_edited, DOWN)
+
+        #re introduce the 3rd parameter in the scene
+        self.play(Write(parametric_equation1_edited), Write(parametric_equation2_edited))
+        self.wait(2)
+        self.play(TransformMatchingTex(parametric_equation1_edited, parametric_equation1), TransformMatchingTex(parametric_equation2_edited, parametric_equation2))
+
+        rect = SurroundingRectangle(parametric_equation1[5])
+        rect2 = SurroundingRectangle(parametric_equation2[5])
+
+        self.play(Create(rect), Create(rect2))
+        self.wait(2)
+        self.play(Uncreate(rect), Uncreate(rect2))
+        self.wait(1)
+
+        equation_group = VGroup(parametric_equation1, parametric_equation2)
+
+
+        self.play(equation_group.animate.to_edge(UP+LEFT).scale(0.75))
+        self.wait(1)
+
+class Example_3d_scene(ThreeDScene):
+    def construct(self):
+        #new 3d scene
+        #do a rotating scene first then change the camera angle so it shows the projection on all 3 planes
+        # then match up and show how they all intersect at one time and point
+        
+        axes = ThreeDAxes(x_range=[-10,25],
+                        y_range=[-10,25],
+                        z_range=[-10,25])
+
+        t_value = ValueTracker(0)
+        
+        curve1 = always_redraw(lambda: ParametricFunction(
+            lambda t: np.array([
+                t**2,
+                7*t-12,
+                t**2
+            ], dtype=float), color=RED, t_range=np.array([0,t_value.get_value()], dtype=float))
+        )
+        curve2 = always_redraw(lambda: ParametricFunction(lambda t: np.array([
+            4*t-3,
+            t**2,
+            5*t-6
+        ], dtype=float), color= BLUE, t_range=np.array([0,t_value.get_value()], dtype=float)))
+        self.renderer.camera.light_source.move_to(3*IN) # changes the source of the light
+        self.set_camera_orientation(phi=70 * DEGREES, theta=250 * DEGREES, zoom=0.4)
+        self.play(Create(axes))
+        self.wait(1)
+        self.add(curve1, curve2)
+        self.begin_ambient_camera_rotation(rate=-0.5, about='theta')
+        self.play(t_value.animate.set_value(3), run_time=3, rate_funct=smooth)
+        self.wait(6)
+        self.stop_ambient_camera_rotation(about='theta')
+
 
 
         
