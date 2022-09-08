@@ -1,4 +1,4 @@
-from cmath import sin
+from cmath import sin, cos, sqrt
 from tkinter import BOTTOM, CENTER, TOP
 from typing_extensions import runtime
 from manim import *
@@ -476,5 +476,27 @@ class Example_3d_scene(ThreeDScene):
         self.stop_ambient_camera_rotation(about='theta')
 
 
+class VolumesOfRevolutions(ThreeDScene):
+
+    def func(self, u, v):
+        return np.array([u**2, u * sin(v) , u * cos(v)])
+
+    def construct(self):
+        self.set_camera_orientation(phi=80 * DEGREES, theta=-90 * DEGREES, zoom=0.6)
+        #self.begin_ambient_camera_rotation(rate=-0.12, about='theta')
+        
+
+        axes = ThreeDAxes()
+        
+        curve1 = ParametricFunction(lambda t: [t**2, t, 0], color=RED, t_range=[0,2])
+        surface1 = Surface(lambda u, v: axes.c2p(*self.func(u,v)), u_range=[0.01, 2], v_range=[0, 2*PI], resolution=8)
+        def update_curve(d,dt):
+            d.rotate_about_origin(dt, RIGHT)
+
+        curve1.add_updater(update_curve)
+
+        self.add(axes)
+        self.add(curve1, surface1)
+        self.wait(6)
 
         
