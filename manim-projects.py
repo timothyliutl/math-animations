@@ -479,9 +479,9 @@ class Example_3d_scene(ThreeDScene):
 class VolumesOfRevolutions(ThreeDScene):
 
     def construct(self):
-        e = ValueTracker(0)
+        e = ValueTracker(0.5*PI)
         self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.6)
-        self.begin_ambient_camera_rotation(rate=-0.05, about='theta')
+        self.begin_ambient_camera_rotation(rate=0.05, about='theta')
         
 
         axes = ThreeDAxes()
@@ -490,17 +490,24 @@ class VolumesOfRevolutions(ThreeDScene):
         #scales might be weird if we dont use axes.plot and plot the surface instead
         #make sure to use axes.c2p for best results
 
-        surface1 = always_redraw(lambda: Surface(lambda u, v: axes.c2p(u**2, u * sin(v) , u * cos(v)), u_range=[0.001, 2], v_range=[0, e.get_value()], resolution=8))
+        surface1 = always_redraw(lambda: Surface(lambda u, v: axes.c2p(u**2, u * sin(v) , u * cos(v)), u_range=[0.001, 2], v_range=[PI/2, e.get_value()], resolution=8))
         area1 = axes.get_area(curve1, x_range=[0,4])
         area_group = VGroup(area1, curve1)
-        rotation = area_group.rotate(angle=e.get_value(), about_point= axes.c2p(0,0,0))
+        rotation = Rotate(area_group, angle=2*PI, axis=RIGHT, about_point= axes.c2p(0,0,0), rate_func=linear, run_time=3, lag_ratio=0)
+        animation_group = AnimationGroup(e.animate.set_value(5/2*PI), rate_func=linear, run_time=3, lag_ratio=0)
+        area_group.initial_state = area_group.copy()
+        def updater(obj):
+            obj.become(obj.initial_state)
+            obj.rotate(e.get_value()+PI/2,about_point=axes.c2p(0,0,0), axis=RIGHT)
         
+        area_group.add_updater(updater)    
+
 
         self.add(axes)
-        self.play(Create(area_group), Create(rotation))
+
         self.wait(2)
-        self.play(Create(surface1))
-        self.play(e.animate.set_value(2*PI), rate_func=linear, run_time=3)
+        self.play(Create(surface1), Create(area_group), Create(area_group.add_updater(updater)))
+        self.play(e.animate.set_value(5/2*PI), rate_func=linear, run_time=3, lag_ratio=0)
         self.wait(6.5)
 
         
