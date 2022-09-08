@@ -478,25 +478,29 @@ class Example_3d_scene(ThreeDScene):
 
 class VolumesOfRevolutions(ThreeDScene):
 
-    def func(self, u, v):
-        return np.array([u**2, u * sin(v) , u * cos(v)])
-
     def construct(self):
-        self.set_camera_orientation(phi=80 * DEGREES, theta=-90 * DEGREES, zoom=0.6)
-        #self.begin_ambient_camera_rotation(rate=-0.12, about='theta')
+        e = ValueTracker(0)
+        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.6)
+        self.begin_ambient_camera_rotation(rate=-0.05, about='theta')
         
 
         axes = ThreeDAxes()
         
-        curve1 = ParametricFunction(lambda t: [t**2, t, 0], color=RED, t_range=[0,2])
-        surface1 = Surface(lambda u, v: axes.c2p(*self.func(u,v)), u_range=[0.01, 2], v_range=[0, 2*PI], resolution=8)
-        def update_curve(d,dt):
-            d.rotate_about_origin(dt, RIGHT)
+        curve1 = axes.plot(lambda x: sqrt(x), x_range=[0,4])
+        #scales might be weird if we dont use axes.plot and plot the surface instead
+        #make sure to use axes.c2p for best results
 
-        curve1.add_updater(update_curve)
+        surface1 = always_redraw(lambda: Surface(lambda u, v: axes.c2p(u**2, u * sin(v) , u * cos(v)), u_range=[0.001, 2], v_range=[0, e.get_value()], resolution=8))
+        area1 = axes.get_area(curve1, x_range=[0,4])
+        area_group = VGroup(area1, curve1)
+        rotation = area_group.rotate(angle=e.get_value(), about_point= axes.c2p(0,0,0))
+        
 
         self.add(axes)
-        self.add(curve1, surface1)
-        self.wait(6)
+        self.play(Create(area_group), Create(rotation))
+        self.wait(2)
+        self.play(Create(surface1))
+        self.play(e.animate.set_value(2*PI), rate_func=linear, run_time=3)
+        self.wait(6.5)
 
         
