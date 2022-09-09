@@ -1,6 +1,8 @@
 from cmath import sin, cos, sqrt
+from decimal import Decimal
 from tkinter import BOTTOM, CENTER, TOP
 from typing_extensions import runtime
+from unicodedata import decimal
 from manim import *
 from matplotlib import mathtext
 from sympy import binomial
@@ -550,4 +552,17 @@ class Week_2_Tutorial_b(Scene):
 
         self.play(Create(num_plane), Create(axis))
         self.wait(1)
+
+        curve = always_redraw(lambda: ParametricFunction(lambda t: num_plane.c2p(cos(t), sin(t)), t_range=[0, time.get_value()], color=GREEN))
+        point = always_redraw(lambda: Dot(num_plane.c2p(cos(time.get_value()), sin(time.get_value())), color=GREEN))
+        decimal_time = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
+        decimal_x = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
+        decimal_y = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
+        decimal_time.add_updater(lambda d: d.set_value(time.get_value()))
+        decimal_x.add_updater(lambda d: d.set_value(cos(time.get_value())))
+        decimal_y.add_updater(lambda d: d.set_value(sin(time.get_value())))
+
+        self.play(Create(curve), Create(point))
+        self.play(time.animate.set_value(2*PI), run_time=4, rate_func=linear)
+        # replace with new text and add a new number plane that is bigger
         
