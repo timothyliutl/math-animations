@@ -579,8 +579,8 @@ class Week_2_Tutorial_b(Scene):
         self.play(axis.animate.become(bigger_axis), num_plane.animate.become(bigger_number_plane), TransformMatchingShapes(curve, curve_new)
         , TransformMatchingShapes(point, new_point))
 
-        transform_equation_x = MathTex(r'x', r' = ', r'6', r' cos(t)', color=RED).scale(1)
-        transform_equation_y = MathTex(r'y', r' = ', r'6', r' sin(t)', color=RED).scale(1)
+        transform_equation_x = MathTex(r'x', r' = ', r'6', r'cos(t)', color=RED).scale(1)
+        transform_equation_y = MathTex(r'y', r' = ', r'6', r'sin(t)', color=RED).scale(1)
 
         bigger_circle = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t), 6*sin(t)), t_range=[0, 2*PI], color=GREEN)
         # rectangles to highlight the changes
@@ -605,8 +605,8 @@ class Week_2_Tutorial_b(Scene):
         self.wait(1)
         self.remove(newer_point)
 
-        slide_equation_x = MathTex(r'x', r' = ', r'6 ', r' cos(t)', r' + 3', color=RED).scale(1)
-        slide_equation_y = MathTex(r'y', r' = ', r'6 ', r' sin(t)', r' + 7', color=RED).scale(1)
+        slide_equation_x = MathTex(r'x', r' = ', r'6', r'cos(t)', r' + 3', color=RED).scale(1)
+        slide_equation_y = MathTex(r'y', r' = ', r'6', r'sin(t)', r' + 7', color=RED).scale(1)
 
         curve_3 = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t) + 3, 6*sin(t)), t_range=[0, 2*PI], color=GREEN)
         self.play(TransformMatchingTex(transform_equation_x, slide_equation_x.to_corner(UP+RIGHT)))
@@ -624,6 +624,6 @@ class Week_2_Tutorial_b(Scene):
         self.play(Uncreate(rect))
         self.play(TransformMatchingShapes(curve_3, curve_4))
         self.wait(1)
-
+        # next steps, create a table and show how the transformations affect 4 points on the circle
 
 
