@@ -490,7 +490,7 @@ class VolumesOfRevolutions(ThreeDScene):
         #scales might be weird if we dont use axes.plot and plot the surface instead
         #make sure to use axes.c2p for best results
 
-        surface1 = always_redraw(lambda: Surface(lambda u, v: axes.c2p(u**2, u * sin(v) , u * cos(v)), u_range=[0.001, 2], v_range=[PI/2, e.get_value()], resolution=8))
+        surface1 = Surface(lambda u, v: axes.c2p(u**2, u * sin(v) , u * cos(v)), u_range=[0.001, 2], v_range=[0, 2*PI], resolution=8)
         area1 = axes.get_area(curve1, x_range=[0,4])
         area_group = VGroup(area1, curve1)
         rotation = Rotate(area_group, angle=2*PI, axis=RIGHT, about_point= axes.c2p(0,0,0), rate_func=linear, run_time=3, lag_ratio=0)
@@ -498,16 +498,56 @@ class VolumesOfRevolutions(ThreeDScene):
         area_group.initial_state = area_group.copy()
         def updater(obj):
             obj.become(obj.initial_state)
-            obj.rotate(e.get_value()+PI/2,about_point=axes.c2p(0,0,0), axis=RIGHT)
+            obj.rotate(e.get_value()-PI/2,about_point=axes.c2p(0,0,0), axis=RIGHT)
         
         area_group.add_updater(updater)    
-
+        curve_copy = curve1.copy()
 
         self.add(axes)
 
         self.wait(2)
-        self.play(Create(surface1), Create(area_group), Create(area_group.add_updater(updater)))
+        self.play(Create(area_group), Create(area_group.add_updater(updater)), Create(curve_copy))
         self.play(e.animate.set_value(5/2*PI), rate_func=linear, run_time=3, lag_ratio=0)
+        self.play(Create(surface1))
+        #make it so it just keeps on spinning
+        self.play(e.animate.set_value(5*PI), rate_func=linear, run_time=3, lag_ratio=0)
         self.wait(6.5)
 
+class Week_2_Tutorial(Scene):
+    def construct(self):
+        axis = Axes(x_range=[-15,15, 5], y_range=[-15,15, 5], x_length=7, y_length=7, tips=False, x_axis_config = {
+        "numbers_to_include": range(-15, 16, 5),
+    },
+    y_axis_config = {
+         "numbers_to_include": range(-15, 16, 5),
+    })
+        num_plane = NumberPlane(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
+        dot = Dot(num_plane.c2p(3,7), radius=DEFAULT_DOT_RADIUS*0.6, color=RED)
+        text = MathTex(r'(3,7)', color=BLUE_A).scale(0.6).next_to(dot, UP).shift(DOWN*0.1)
+        brace = BraceBetweenPoints(num_plane.c2p(3,7), num_plane.c2p(9,7)).shift(UP*0.1)
+        brace_text = MathTex(r'radius = 6').scale(0.6).next_to(brace, DOWN)
+        self.play(Write(num_plane), Write(axis))
+        self.play(Create(axis.plot_parametric_curve(lambda t: [6*cos(t)+3, 6*sin(t)+7], t_range=[0,2*PI+0.5], color=GREEN)))
+        self.play(DrawBorderThenFill(dot))
+        self.play(Write(text))
+        self.play(DrawBorderThenFill(brace), Write(brace_text))
+
+        
+class Week_2_Tutorial_b(Scene):
+    def construct(self):
+        equation_x = MathTex(r'x', r' = ', r'cos(t)', color=RED).scale(1)
+        equation_y = MathTex(r'y', r' = ', r'sin(t)', color=RED).next_to(equation_x, DOWN).scale(1)
+        self.play(Write(equation_x), Write(equation_y))
+        self.play(equation_x.animate.to_edge(UP+RIGHT), equation_y.animate.to_edge(UP+RIGHT).shift(DOWN*0.7))
+        time = ValueTracker(0.001)
+        axis = Axes(x_range=[-2,2, 1], y_range=[-2,2, 1], x_length=7, y_length=7, tips=False, x_axis_config = {
+        "numbers_to_include": range(-2, 3, 1),
+    },
+    y_axis_config = {
+         "numbers_to_include": range(-2, 3, 1),
+    })
+        num_plane = NumberPlane(x_range=[-2,2, 1], y_range=[-2,2, 1], x_length=7, y_length=7)
+
+        self.play(Create(num_plane), Create(axis))
+        self.wait(1)
         
