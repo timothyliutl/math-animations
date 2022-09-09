@@ -1,6 +1,7 @@
 from cmath import sin, cos, sqrt
 from decimal import Decimal
 from tkinter import BOTTOM, CENTER, TOP
+from turtle import dot
 from typing_extensions import runtime
 from unicodedata import decimal
 from manim import *
@@ -565,4 +566,64 @@ class Week_2_Tutorial_b(Scene):
         self.play(Create(curve), Create(point))
         self.play(time.animate.set_value(2*PI), run_time=4, rate_func=linear)
         # replace with new text and add a new number plane that is bigger
+
+        bigger_number_plane = NumberPlane(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
+        bigger_axis = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7, tips=False, x_axis_config = {
+        "numbers_to_include": range(-15, 16, 3),
+    },
+    y_axis_config = {
+         "numbers_to_include": range(-15, 16, 3),
+    })
+        curve_new = ParametricFunction(lambda t: bigger_number_plane.c2p(cos(t), sin(t)), t_range=[0, 2*PI], color=GREEN)
+        new_point = always_redraw(lambda: Dot(bigger_number_plane.c2p(cos(time.get_value()), sin(time.get_value())), color=GREEN))
+        self.play(axis.animate.become(bigger_axis), num_plane.animate.become(bigger_number_plane), TransformMatchingShapes(curve, curve_new)
+        , TransformMatchingShapes(point, new_point))
+
+        transform_equation_x = MathTex(r'x', r' = ', r'6', r' cos(t)', color=RED).scale(1)
+        transform_equation_y = MathTex(r'y', r' = ', r'6', r' sin(t)', color=RED).scale(1)
+
+        bigger_circle = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t), 6*sin(t)), t_range=[0, 2*PI], color=GREEN)
+        # rectangles to highlight the changes
         
+        self.wait(2)
+        newer_point = Dot(bigger_number_plane.c2p(6*cos(time.get_value()), 6*sin(time.get_value())), color=GREEN)
+        
+        
+        self.play(TransformMatchingTex(equation_x, transform_equation_x.to_corner(UP+RIGHT)),
+            TransformMatchingTex(equation_y, transform_equation_y.next_to(transform_equation_x, DOWN)))
+        rect1 = SurroundingRectangle(transform_equation_x[2])
+        rect2 = SurroundingRectangle(transform_equation_y[2])
+        self.play(Create(rect1), Create(rect2))
+        self.wait(1)
+        self.play(Uncreate(rect1), Uncreate(rect2))
+        self.wait(1)
+
+        self.play(
+            TransformMatchingShapes(curve_new, bigger_circle),
+            TransformMatchingShapes(new_point, newer_point)
+            )
+        self.wait(1)
+        self.remove(newer_point)
+
+        slide_equation_x = MathTex(r'x', r' = ', r'6 ', r' cos(t)', r' + 3', color=RED).scale(1)
+        slide_equation_y = MathTex(r'y', r' = ', r'6 ', r' sin(t)', r' + 7', color=RED).scale(1)
+
+        curve_3 = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t) + 3, 6*sin(t)), t_range=[0, 2*PI], color=GREEN)
+        self.play(TransformMatchingTex(transform_equation_x, slide_equation_x.to_corner(UP+RIGHT)))
+        rect = SurroundingRectangle(slide_equation_x[-1])
+        self.play(Create(rect))
+        self.wait(1)
+        self.play(Uncreate(rect))
+        self.play(TransformMatchingShapes(bigger_circle, curve_3))
+
+        curve_4 = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t) + 3, 6*sin(t) + 7), t_range=[0, 2*PI], color=GREEN)
+        self.play(TransformMatchingTex(transform_equation_y, slide_equation_y.next_to(slide_equation_x, DOWN)))
+        rect = SurroundingRectangle(slide_equation_y[-1])
+        self.play(Create(rect))
+        self.wait(1)
+        self.play(Uncreate(rect))
+        self.play(TransformMatchingShapes(curve_3, curve_4))
+        self.wait(1)
+
+
+
