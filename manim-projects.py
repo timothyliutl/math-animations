@@ -550,12 +550,28 @@ class Week_2_Tutorial_b(Scene):
          "numbers_to_include": range(-2, 3, 1),
     })
         num_plane = NumberPlane(x_range=[-2,2, 1], y_range=[-2,2, 1], x_length=7, y_length=7)
+        num_plane.shift(LEFT)
+        axis.shift(LEFT)
+
+        table = MathTable(
+            [['t', 'x', 'y'],
+            [0, 1,0],
+            [r'\frac{\pi}{2}', r'0', '1'],
+            [r'\pi', -1, 0],
+            [r'\frac{3}{2}\pi', 0, -1]],
+            include_outer_lines=True).scale(0.6).to_edge(RIGHT)
+        top_dot = Dot(axis.c2p(0,1), color=BLUE)
+        right_dot = Dot(axis.c2p(1,0), color=RED)
+        left_dot = Dot(axis.c2p(-1,0), color=ORANGE)
+        bottom_dot = Dot(axis.c2p(0,-1), color=YELLOW)
 
         self.play(Create(num_plane), Create(axis))
+        self.play(Create(top_dot), Create(right_dot), Create(left_dot), Create(bottom_dot))
+        self.play(Create(table))
         self.wait(1)
 
         curve = always_redraw(lambda: ParametricFunction(lambda t: num_plane.c2p(cos(t), sin(t)), t_range=[0, time.get_value()], color=GREEN))
-        point = always_redraw(lambda: Dot(num_plane.c2p(cos(time.get_value()), sin(time.get_value())), color=GREEN))
+        point = always_redraw(lambda: Dot(num_plane.c2p(cos(time.get_value()), sin(time.get_value())), color=GREEN)).scale(0.8)
         decimal_time = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
         decimal_x = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
         decimal_y = DecimalNumber(0, num_decimal_places=3, include_sign=True, unit=None)
@@ -567,17 +583,18 @@ class Week_2_Tutorial_b(Scene):
         self.play(time.animate.set_value(2*PI), run_time=4, rate_func=linear)
         # replace with new text and add a new number plane that is bigger
 
-        bigger_number_plane = NumberPlane(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
+        bigger_number_plane = NumberPlane(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7).shift(LEFT)
         bigger_axis = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7, tips=False, x_axis_config = {
         "numbers_to_include": range(-15, 16, 3),
     },
     y_axis_config = {
          "numbers_to_include": range(-15, 16, 3),
-    })
+    }).shift(LEFT)
         curve_new = ParametricFunction(lambda t: bigger_number_plane.c2p(cos(t), sin(t)), t_range=[0, 2*PI], color=GREEN)
         new_point = always_redraw(lambda: Dot(bigger_number_plane.c2p(cos(time.get_value()), sin(time.get_value())), color=GREEN))
         self.play(axis.animate.become(bigger_axis), num_plane.animate.become(bigger_number_plane), TransformMatchingShapes(curve, curve_new)
-        , TransformMatchingShapes(point, new_point))
+        , TransformMatchingShapes(point, new_point),
+        top_dot.animate.move_to(bigger_axis.c2p(0,1)), right_dot.animate.move_to(bigger_axis.c2p(1,0)), left_dot.animate.move_to(bigger_axis.c2p(-1,0)), bottom_dot.animate.move_to(bigger_axis.c2p(0,-1)))
 
         transform_equation_x = MathTex(r'x', r' = ', r'6', r'cos(t)', color=RED).scale(1)
         transform_equation_y = MathTex(r'y', r' = ', r'6', r'sin(t)', color=RED).scale(1)
@@ -597,10 +614,18 @@ class Week_2_Tutorial_b(Scene):
         self.wait(1)
         self.play(Uncreate(rect1), Uncreate(rect2))
         self.wait(1)
+        self.play(
+            table.get_entries((2,2)).animate.become(MathTex(6).scale(0.6).move_to(table.get_entries((2,2)).get_center())),
+            table.get_entries((4,2)).animate.become(MathTex(-6).scale(0.6).move_to(table.get_entries((4,2)).get_center())),
+            table.get_entries((3,3)).animate.become(MathTex(6).scale(0.6).move_to(table.get_entries((3,3)).get_center())),
+            table.get_entries((5,3)).animate.become(MathTex(-6).scale(0.6).move_to(table.get_entries((5,3)).get_center()))
+            )
+
 
         self.play(
             TransformMatchingShapes(curve_new, bigger_circle),
-            TransformMatchingShapes(new_point, newer_point)
+            TransformMatchingShapes(new_point, newer_point),
+            top_dot.animate.move_to(bigger_axis.c2p(0,6)), right_dot.animate.move_to(bigger_axis.c2p(6,0)), left_dot.animate.move_to(bigger_axis.c2p(-6,0)), bottom_dot.animate.move_to(bigger_axis.c2p(0,-6))
             )
         self.wait(1)
         self.remove(newer_point)
@@ -614,7 +639,16 @@ class Week_2_Tutorial_b(Scene):
         self.play(Create(rect))
         self.wait(1)
         self.play(Uncreate(rect))
-        self.play(TransformMatchingShapes(bigger_circle, curve_3))
+        self.play(
+            table.get_entries((2,2)).animate.become(MathTex(9).scale(0.6).move_to(table.get_entries((2,2)).get_center())),
+            table.get_entries((3,2)).animate.become(MathTex(3).scale(0.6).move_to(table.get_entries((3,2)).get_center())),
+            table.get_entries((4,2)).animate.become(MathTex(-3).scale(0.6).move_to(table.get_entries((4,2)).get_center())),
+            table.get_entries((5,2)).animate.become(MathTex(3).scale(0.6).move_to(table.get_entries((5,2)).get_center()))
+            )
+
+        self.play(TransformMatchingShapes(bigger_circle, curve_3), 
+                top_dot.animate.move_to(bigger_axis.c2p(3,6)), right_dot.animate.move_to(bigger_axis.c2p(9,0)), left_dot.animate.move_to(bigger_axis.c2p(-3,0)), bottom_dot.animate.move_to(bigger_axis.c2p(3,-6))
+        )
 
         curve_4 = ParametricFunction(lambda t: bigger_number_plane.c2p(6*cos(t) + 3, 6*sin(t) + 7), t_range=[0, 2*PI], color=GREEN)
         self.play(TransformMatchingTex(transform_equation_y, slide_equation_y.next_to(slide_equation_x, DOWN)))
@@ -622,7 +656,15 @@ class Week_2_Tutorial_b(Scene):
         self.play(Create(rect))
         self.wait(1)
         self.play(Uncreate(rect))
-        self.play(TransformMatchingShapes(curve_3, curve_4))
+        self.play(
+            table.get_entries((2,3)).animate.become(MathTex(7).scale(0.6).move_to(table.get_entries((2,3)).get_center())),
+            table.get_entries((3,3)).animate.become(MathTex(13).scale(0.6).move_to(table.get_entries((3,3)).get_center())),
+            table.get_entries((4,3)).animate.become(MathTex(7).scale(0.6).move_to(table.get_entries((4,3)).get_center())),
+            table.get_entries((5,3)).animate.become(MathTex(1).scale(0.6).move_to(table.get_entries((5,3)).get_center()))
+            )
+        self.play(TransformMatchingShapes(curve_3, curve_4),
+                    top_dot.animate.move_to(bigger_axis.c2p(3,13)), right_dot.animate.move_to(bigger_axis.c2p(9,7)), left_dot.animate.move_to(bigger_axis.c2p(-3,7)), bottom_dot.animate.move_to(bigger_axis.c2p(3,1))
+)
         self.wait(1)
         # next steps, create a table and show how the transformations affect 4 points on the circle
 
