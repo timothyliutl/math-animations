@@ -668,4 +668,32 @@ class Week_2_Tutorial_b(Scene):
         self.wait(1)
         # next steps, create a table and show how the transformations affect 4 points on the circle
 
+class Sussy(Scene):
+    def construct(self):
+        grid = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
+        #eq1 = grid.plot_implicit_curve(lambda x,y:((x-0.3)**2)/16 + ((y-1.1)**2)/30-1, x_range=[-2.5, 3.736])
+        eq1 = ImplicitFunction(lambda x, y: ((x-0.3)**2)/16 + ((y-1.1)**2)/30-1, x_range=[-2.5, 3.736]).scale(0.6)
+        #eq2 = grid.plot_implicit_curve(lambda x,y:((x-0.4)**2)/12 + ((y+0.5)**2)/100-1, y_range=[-4.235,5.03], x_range=[-100, 2])
+        
+        self.play(Create(grid), Create(eq1))
+
+class Week3Example(Scene):
+    def parametric_curve(self,t):
+        return[t-2, t**2 + 1]
+
+    def tangent_curve(self, t):
+        arr = np.array([1, 2*t])
+        return(arr/ np.linalg.norm(arr))
+
+    def construct(self):
+        grid = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
+        time = ValueTracker(-4)
+        path = always_redraw(lambda: ParametricFunction(lambda t:grid.c2p(*self.parametric_curve(t)), t_range=[-4, max(-3.99, time.get_value())]).set_color(BLUE))
+        tangent_path = always_redraw(lambda: Arrow(stroke_width=5).put_start_and_end_on(grid.c2p(*(self.parametric_curve(time.get_value()) - 2*self.tangent_curve(time.get_value()) )), grid.c2p(*(self.parametric_curve(time.get_value()) + 2*self.tangent_curve(time.get_value())))))
+        tangent_line = always_redraw(lambda: ParametricFunction(lambda t: grid.c2p(*(t*(self.tangent_curve(time.get_value())) + self.parametric_curve(time.get_value()))), t_range=[0,4]).set_color(RED))
+        dot = Dot(grid.c2p(5,-3), color=GREEN)
+        curve_dot = always_redraw(lambda: Dot(grid.c2p(*self.parametric_curve(time.get_value())), color=BLUE))
+        self.play(Create(grid), Create(dot), Create(curve_dot), Create(tangent_line))
+        self.add(path, tangent_path)
+        self.play(time.animate.set_value(5), run_time = 4, rate_func=linear)
 
