@@ -683,17 +683,46 @@ class Week3Example(Scene):
 
     def tangent_curve(self, t):
         arr = np.array([1, 2*t])
-        return(arr/ np.linalg.norm(arr))
+        return arr
+
+    def min_time(self, t, release_t):
+        return min(release_t, t)
+
+    point = [5,-3]
+    time_release = -2
+    starting_time = -4
+    end_time = 4
+
+    def fixed_tangent_curve(self, t_0, t):
+        equation = self.parametric_curve(t_0) + t*self.tangent_curve(t_0)
+        return equation
 
     def construct(self):
         grid = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
-        time = ValueTracker(-4)
-        path = always_redraw(lambda: ParametricFunction(lambda t:grid.c2p(*self.parametric_curve(t)), t_range=[-4, max(-3.99, time.get_value())]).set_color(BLUE))
-        tangent_path = always_redraw(lambda: Arrow(stroke_width=5).put_start_and_end_on(grid.c2p(*(self.parametric_curve(time.get_value()) - 2*self.tangent_curve(time.get_value()) )), grid.c2p(*(self.parametric_curve(time.get_value()) + 2*self.tangent_curve(time.get_value())))))
-        tangent_line = always_redraw(lambda: ParametricFunction(lambda t: grid.c2p(*(t*(self.tangent_curve(time.get_value())) + self.parametric_curve(time.get_value()))), t_range=[0,4]).set_color(RED))
-        dot = Dot(grid.c2p(5,-3), color=GREEN)
+        time = ValueTracker(self.starting_time) #time for tangent line and red dot
+        time2 = ValueTracker(self.starting_time) 
+        path_equation = MathTex(r'r(t) = <t-2, t^2 +1>', color=BLUE).to_corner(UP + RIGHT)
+        der_path_equation = MathTex(r"r'(t) = <1, 2t>", color=RED).next_to(path_equation, DOWN)
+        
+        
+        path = ParametricFunction(lambda t:grid.c2p(*self.parametric_curve(t)), t_range=[-4, 5]).set_opacity(0.5).set_color(BLUE).set_fill(opacity=0)
+        tangent_path = always_redraw(lambda: Arrow(stroke_width=3, color=RED).put_start_and_end_on(grid.c2p(*(self.parametric_curve(time.get_value()) - 2*self.tangent_curve(time.get_value()) )), grid.c2p(*(self.parametric_curve(time.get_value()) + 2*self.tangent_curve(time.get_value())))))
+        tangent_line = always_redraw(lambda: ParametricFunction(lambda t: grid.c2p(*(t*(self.tangent_curve(self.min_time(self.time_release, time.get_value()))) + self.parametric_curve(self.min_time(self.time_release, time.get_value())))), t_range=[-1,1]).set_color(RED).set_opacity(0.5))
+        dot = Dot(grid.c2p(*self.point), color=GREEN)
+
+        def position(t, t_release):
+            if t>t_release:
+                return self.fixed_tangent_curve(t_release, t - t_release)
+            else:
+                return self.parametric_curve(t)
+
+        indy_dot = always_redraw(lambda: Dot(color=RED).move_to(grid.c2p(*position(time.get_value(), self.time_release))))
         curve_dot = always_redraw(lambda: Dot(grid.c2p(*self.parametric_curve(time.get_value())), color=BLUE))
-        self.play(Create(grid), Create(dot), Create(curve_dot), Create(tangent_line))
-        self.add(path, tangent_path)
-        self.play(time.animate.set_value(5), run_time = 4, rate_func=linear)
+        
+        animation_group = AnimationGroup(time.animate.set_value(-2), time2.animate.set_value(-2), run_time=3, rate_func=linear)
+        self.add(indy_dot)
+        self.play(Create(grid), Create(dot), Create(curve_dot), Create(tangent_line), Create(path), Write(path_equation), Write(der_path_equation))
+        
+        self.play(time.animate.set_value(self.end_time), run_time = 5)
+        
 
