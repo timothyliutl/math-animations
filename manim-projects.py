@@ -684,6 +684,9 @@ class Week3Example(Scene):
     def tangent_curve(self, t):
         arr = np.array([1, 2*t])
         return arr
+    def norm_tangent_curve(self, t):
+        arr = np.array([1, 2*t])
+        return (arr/np.linalg.norm(arr))
 
     def min_time(self, t, release_t):
         return min(release_t, t)
@@ -707,7 +710,7 @@ class Week3Example(Scene):
         
         path = ParametricFunction(lambda t:grid.c2p(*self.parametric_curve(t)), t_range=[-4, 5]).set_opacity(0.5).set_color(BLUE).set_fill(opacity=0)
         tangent_path = always_redraw(lambda: Arrow(stroke_width=3, color=RED).put_start_and_end_on(grid.c2p(*(self.parametric_curve(time.get_value()) - 2*self.tangent_curve(time.get_value()) )), grid.c2p(*(self.parametric_curve(time.get_value()) + 2*self.tangent_curve(time.get_value())))))
-        tangent_line = always_redraw(lambda: ParametricFunction(lambda t: grid.c2p(*(t*(self.tangent_curve(self.min_time(self.time_release, time.get_value()))) + self.parametric_curve(self.min_time(self.time_release, time.get_value())))), t_range=[-1,1]).set_color(RED).set_opacity(0.5))
+        tangent_line = always_redraw(lambda: ParametricFunction(lambda t: grid.c2p(*(t*(self.norm_tangent_curve(self.min_time(self.time_release, time.get_value()))) + self.parametric_curve(self.min_time(self.time_release, time.get_value())))), t_range=[-5,15]).set_color(RED).set_opacity(0.5))
         dot = Dot(grid.c2p(*self.point), color=GREEN)
 
         def position(t, t_release):
