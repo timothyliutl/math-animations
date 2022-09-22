@@ -704,8 +704,8 @@ class Week3Example(Scene):
         grid = Axes(x_range=[-15,15, 3], y_range=[-15,15, 3], x_length=7, y_length=7)
         time = ValueTracker(self.starting_time) #time for tangent line and red dot
         time2 = ValueTracker(self.starting_time) 
-        path_equation = MathTex(r'r(t) = <t-2, t^2 +1>', color=BLUE).to_corner(UP + RIGHT)
-        der_path_equation = MathTex(r"r'(t) = <1, 2t>", color=RED).next_to(path_equation, DOWN)
+        path_equation = MathTex(r'r(t) = <2+t, t^3 - t>', color=BLUE).to_corner(UP + RIGHT)
+        der_path_equation = MathTex(r"r'(t) = <1, 3t^2-1>", color=RED).next_to(path_equation, DOWN)
         
         
         path = ParametricFunction(lambda t:grid.c2p(*self.parametric_curve(t)), t_range=[-4, 5]).set_opacity(0.5).set_color(BLUE).set_fill(opacity=0)
