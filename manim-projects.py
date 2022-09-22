@@ -679,25 +679,25 @@ class Sussy(Scene):
 
 class Week3Example(Scene):
     def parametric_curve(self,t):
-        return[t-2, t**2 + 1]
+        return[2+t, t**3 - t]
 
     def tangent_curve(self, t):
-        arr = np.array([1, 2*t])
+        arr = np.array([1, 3*t**2 - 1])
         return arr
     def norm_tangent_curve(self, t):
-        arr = np.array([1, 2*t])
+        arr = np.array([1, 3*t**2 - 1])
         return (arr/np.linalg.norm(arr))
 
     def min_time(self, t, release_t):
         return min(release_t, t)
 
     point = [5,-3]
-    time_release = -2
+    time_release = 0
     starting_time = -4
     end_time = 4
 
     def fixed_tangent_curve(self, t_0, t):
-        equation = self.parametric_curve(t_0) + t*self.tangent_curve(t_0)
+        equation = self.parametric_curve(t_0) + (t-t_0)*self.tangent_curve(t_0)
         return equation
 
     def construct(self):
@@ -714,7 +714,7 @@ class Week3Example(Scene):
         dot = Dot(grid.c2p(*self.point), color=GREEN)
 
         def position(t, t_release):
-            if t>t_release:
+            if t>=t_release:
                 return self.fixed_tangent_curve(t_release, t - t_release)
             else:
                 return self.parametric_curve(t)
