@@ -714,6 +714,9 @@ class Week3Example(Scene):
         dashed_tangent_line = always_redraw(lambda: DashedVMobject( ParametricFunction(lambda t: grid.c2p(*(t*(self.norm_tangent_curve(self.min_time(self.time_release, time.get_value()))) + self.parametric_curve(self.min_time(self.time_release, time.get_value())))), t_range=[-20,0]).set_color(RED).set_opacity(0.5)))
 
         dot = Dot(grid.c2p(*self.point), color=GREEN)
+        release_dot = Dot(grid.c2p(*self.parametric_curve(self.time_release)), color=YELLOW)
+        time_release = Text('Release time: t = ' + str(self.time_release)).scale(0.6).next_to(release_dot, RIGHT)
+
 
         def position(t, t_release):
             if t>=t_release:
@@ -723,11 +726,14 @@ class Week3Example(Scene):
 
         indy_dot = always_redraw(lambda: Dot(color=RED).move_to(grid.c2p(*position(time.get_value(), self.time_release))))
         curve_dot = always_redraw(lambda: Dot(grid.c2p(*self.parametric_curve(time.get_value())), color=BLUE))
-        
+        time_variable = Variable(self.starting_time, 'time', num_decimal_places=3).next_to(der_path_equation, DOWN)
+
         animation_group = AnimationGroup(time.animate.set_value(-2), time2.animate.set_value(-2), run_time=3, rate_func=linear)
         self.add(indy_dot)
-        self.play(Create(grid), Create(dot), Create(curve_dot), Create(tangent_line), Create(dashed_tangent_line), Create(path), Write(path_equation), Write(der_path_equation), run_time=2)
+        self.play(Create(grid), Create(dot), Create(curve_dot), Create(tangent_line), Create(dashed_tangent_line), Create(path), Write(path_equation), Write(der_path_equation), Write(time_variable), run_time=2)
         
-        self.play(time.animate.set_value(self.end_time), run_time = 5)
+        self.play(time.animate.set_value(self.end_time),time_variable.tracker.animate.set_value(self.end_time), run_time = 5)
+        
+        
         
 
