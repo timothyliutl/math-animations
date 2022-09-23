@@ -12,7 +12,20 @@ Once Manim Community Edition has been installed on the users computer, the anima
 
 Where {ClassName} refers to the names of the classes in the python file. The animations will be saved locally in a folder called ```media``` and a video file of the animation will be opened.
 
-## Animations created so far
+## Animations used in APSC 171 Tutorials
+
+
+
+https://user-images.githubusercontent.com/55731604/191881768-c61da87d-fb8c-4f9a-84ad-f81a6596f1b4.mp4
+
+
+
+https://user-images.githubusercontent.com/55731604/191881777-26651eba-65f7-4348-9fc7-bac7609d7b68.mp4
+
+
+
+
+## Animations created for fun
 * Reimann Sum Example
 * Definition of a Derivative
 * APSC 171 tutorial Example (Work in progress)
