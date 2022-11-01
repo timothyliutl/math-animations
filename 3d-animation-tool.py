@@ -40,24 +40,35 @@ class WorkIntegral(ThreeDScene):
             return 5/2*(height-7)
 
         def cylinder_slice(u,v, radius):
-            return np.array([sqrt(radius)*cos(v), sqrt(radius)*sin(v), u])
+            return np.array([radius*cos(v), radius*sin(v), u])
        
         def cylinder_end(u,v, height):
-            return np.array([sqrt(u)*cos(v), sqrt(u)*sin(v), height])
+            return np.array([u*cos(v), u*sin(v), height])
 
         def cylinder_group(radius,height, dx):
-            cylinder = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,2)), u_range=[height-dx,height], v_range=[0,2*PI])
-            caps = Surface(lambda u,v: axes.c2p(*cylinder_end(u,v,height)), u_range=[0,radius], v_range=[0,2*PI])
-            caps2 = Surface(lambda u,v: axes.c2p(*cylinder_end(u,v,height-dx)), u_range=[0,radius], v_range=[0,2*PI])
+            cylinder = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,radius)), u_range=[height-dx,height], v_range=[0,2*PI], resolution=8, fill_opacity=0.5, fill_color=ORANGE, checkerboard_colors=[ORANGE])
+            caps = Surface(lambda u,v: axes.c2p(*cylinder_end(u,v,height)), u_range=[0.01,radius], v_range=[0,2*PI], resolution=8, fill_opacity=0.5, fill_color=ORANGE, checkerboard_colors=[ORANGE])
+            caps2 = Surface(lambda u,v: axes.c2p(*cylinder_end(u,v,height-dx)), u_range=[0.01,radius], v_range=[0,2*PI], resolution=8, fill_opacity=0.5, fill_color=ORANGE, checkerboard_colors=[ORANGE])
             return VGroup(cylinder, caps, caps2)
 
-        cone = Surface(lambda u,v: axes.c2p(*solid(u,v)), u_range=[0.1,5/2], v_range=[0, 2*PI])
+        cone = Surface(lambda u,v: axes.c2p(*solid(u,v)), u_range=[0.1,2], v_range=[0, 2*PI], fill_opacity=0.5, resolution=8)
+        self.move_camera(phi=0*DEGREES, theta=0*DEGREES, focal_distance=20)
 
-        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.8)
+        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.5)
+        
 
 
         self.play(Create(axes))
         self.play(Create(cone))
-        self.play(Create(cylinder_group(2, 12, 0.5)))
+        num_cylinders = 10
+        for i in range(num_cylinders + 1):
+            height = (5/num_cylinders)*i
+            radius = height*2/5
+            dx=5/num_cylinders
+            cylinder_surface = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,radius)), u_range=[height-dx/2+7,height+7 + dx/2], v_range=[0,2*PI], resolution=8)
+            
+            self.play(Create(cylinder_group(radius, height+7, dx)))
+        self.wait(2)
+
 
 
