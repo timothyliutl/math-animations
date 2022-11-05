@@ -21,7 +21,7 @@ class ThreeDTool(ThreeDScene):
         surface1 = Surface(lambda u,v: axes.c2p(*surface1(u,v)), u_range=[0.1, 5], v_range=[0, 2*PI], resolution=12)
 
 
-        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.6)
+        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.6, focal_distance=1000)
 
         self.play(Create(axes))
         self.play(Create(surface1))
@@ -30,7 +30,7 @@ class ThreeDTool(ThreeDScene):
 class WorkIntegral(ThreeDScene):
     def construct(self):
 
-        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,10])
+        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,10]).shift(-1* OUT)
 
         def solid(u,v):
             #cone with height 5 and radius 2
@@ -52,9 +52,10 @@ class WorkIntegral(ThreeDScene):
             return VGroup(cylinder, caps, caps2)
 
         cone = Surface(lambda u,v: axes.c2p(*solid(u,v)), u_range=[0.1,2], v_range=[0, 2*PI], fill_opacity=0.5, resolution=8)
-        self.move_camera(phi=0*DEGREES, theta=0*DEGREES, focal_distance=20)
+        self.move_camera(phi=0*DEGREES, theta=0*DEGREES, focal_distance=100)
 
-        self.set_camera_orientation(phi=30 * DEGREES, theta=-60 * DEGREES, zoom=0.5)
+
+        self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES, zoom=0.75, focal_distance=200)
         
 
 
@@ -67,7 +68,7 @@ class WorkIntegral(ThreeDScene):
             dx=5/num_cylinders
             cylinder_surface = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,radius)), u_range=[height-dx/2+7,height+7 + dx/2], v_range=[0,2*PI], resolution=8)
             
-            self.play(Create(cylinder_group(radius, height+7, dx)))
+            self.play(DrawBorderThenFill(cylinder_group(radius, height+7, dx), run_time=0.75))
         self.wait(2)
 
 
