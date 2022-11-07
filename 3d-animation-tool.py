@@ -30,7 +30,7 @@ class ThreeDTool(ThreeDScene):
 class WorkIntegral(ThreeDScene):
     def construct(self):
 
-        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,10]).shift(-1* OUT)
+        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,10]).shift(-3* OUT)
 
         def solid(u,v):
             #cone with height 5 and radius 2
@@ -52,24 +52,50 @@ class WorkIntegral(ThreeDScene):
             return VGroup(cylinder, caps, caps2)
 
         cone = Surface(lambda u,v: axes.c2p(*solid(u,v)), u_range=[0.1,2], v_range=[0, 2*PI], fill_opacity=0.5, resolution=8)
-        self.move_camera(phi=0*DEGREES, theta=0*DEGREES, focal_distance=100)
 
+        def line_function(t):
+            return np.array([0,t, 5/2*t + 7])
 
-        self.set_camera_orientation(phi=40 * DEGREES, theta=-60 * DEGREES, zoom=0.75, focal_distance=200)
-        
+        # https://github.com/3b1b/manim/issues/730
+        line = ParametricFunction(lambda t: axes.c2p(*line_function(t)), t_range=[0,2])
+        rotate_tracker = ValueTracker(0.001)
+        line.initial_state = line.copy()
+        def updater(obj):
+            obj.become(obj.initial_state)
+            obj.rotate(rotate_tracker.get_value()-PI/2, axis=OUT, about_point=axes.c2p(0,0,7))
 
+        self.set_camera_orientation(phi=90 * DEGREES, theta=90*DEGREES, zoom=0.75, focal_distance=200)
+
+        #drawing the line that makes the cone then rotating it        
+        #drawing the cone as well as the cylinders used to approximate the volume
 
         self.play(Create(axes))
+        self.play(Create(line.add_updater(updater)))
+
+        self.move_camera(phi=60*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
+
+        self.play(rotate_tracker.animate.set_value(2*PI))
+
+        self.wait(2)
         self.play(Create(cone))
-        num_cylinders = 10
-        for i in range(num_cylinders + 1):
+        self.play(rotate_tracker.animate.set_value(4*PI))
+        
+        self.move_camera(phi=40 * DEGREES, theta=60 * DEGREES, gamma=0*DEGREES, zoom=0.75, focal_distance=200)
+        
+        num_cylinders = 7
+        cylinder_list = []
+        for i in range(1, num_cylinders + 1):
             height = (5/num_cylinders)*i
-            radius = height*2/5
+            height_prev = (5/num_cylinders)*(i-1)
+            radius =  (height_prev+height)/2*2/5
             dx=5/num_cylinders
             cylinder_surface = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,radius)), u_range=[height-dx/2+7,height+7 + dx/2], v_range=[0,2*PI], resolution=8)
-            
-            self.play(DrawBorderThenFill(cylinder_group(radius, height+7, dx), run_time=0.75))
+            cylinder_list.append(cylinder_group(radius, height+7, dx))
+            self.play(DrawBorderThenFill(cylinder_list[-1], run_time=0.75))
         self.wait(2)
+
+        for cylinder in cylinder_list:
+            self.play(cylinder.animate.shift(-2.5*LEFT), run_time=0.5)
 
 
 
