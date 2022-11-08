@@ -30,7 +30,7 @@ class ThreeDTool(ThreeDScene):
 class WorkIntegral(ThreeDScene):
     def construct(self):
 
-        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,10]).shift(-3* OUT)
+        axes = ThreeDAxes(x_range=[-10,10], y_range=[-10,10], z_range=[0,13]).shift(-3* OUT)
 
         def solid(u,v):
             #cone with height 5 and radius 2
@@ -58,30 +58,44 @@ class WorkIntegral(ThreeDScene):
 
         # https://github.com/3b1b/manim/issues/730
         line = ParametricFunction(lambda t: axes.c2p(*line_function(t)), t_range=[0,2])
-        rotate_tracker = ValueTracker(0.001)
+        rotate_tracker = ValueTracker(0)
         line.initial_state = line.copy()
         def updater(obj):
             obj.become(obj.initial_state)
-            obj.rotate(rotate_tracker.get_value()-PI/2, axis=OUT, about_point=axes.c2p(0,0,7))
+            obj.rotate(rotate_tracker.get_value(), axis=OUT, about_point=axes.c2p(0,0,7))
 
-        self.set_camera_orientation(phi=90 * DEGREES, theta=90*DEGREES, zoom=0.75, focal_distance=200)
+
+        brace = BraceBetweenPoints(axes.c2p(0,0,line_function(1.75)[2]), axes.c2p(*line_function(1.75))).rotate(90*DEGREES, axis=UP, about_point=axes.c2p(0,0,line_function(1.75)[2]))
+        radius_text = MathTex('Radius').set_color(BLUE).next_to(brace, IN).rotate(90*DEGREES, axis=UP).scale(0.5).rotate(90*DEGREES, axis=RIGHT)
+        equation = MathTex(r'h = 5/2 r + 7')
+
+        self.set_camera_orientation(phi=90 * DEGREES, theta=0*DEGREES, zoom=0.75, focal_distance=200)
 
         #drawing the line that makes the cone then rotating it        
         #drawing the cone as well as the cylinders used to approximate the volume
-
+        
+        equation.to_corner(UR)
         self.play(Create(axes))
+        
+        self.add_fixed_in_frame_mobjects(equation)
+        self.play(Write(equation))
         self.play(Create(line.add_updater(updater)))
+        self.play(Write(brace), Write(radius_text))
+        self.wait(1)
 
-        self.move_camera(phi=60*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
+        
+
+        self.move_camera(phi=60*DEGREES, theta=-45*DEGREES, zoom=0.75, focal_distance=200)
 
         self.play(rotate_tracker.animate.set_value(2*PI))
 
         self.wait(2)
         self.play(Create(cone))
         self.play(rotate_tracker.animate.set_value(4*PI))
-        
-        self.move_camera(phi=40 * DEGREES, theta=60 * DEGREES, gamma=0*DEGREES, zoom=0.75, focal_distance=200)
-        
+        self.play(Unwrite(brace), Unwrite(radius_text))
+    
+        self.move_camera(phi=40 * DEGREES, theta=-60 * DEGREES, gamma=0*DEGREES, zoom=0.75, focal_distance=200)
+
         num_cylinders = 7
         cylinder_list = []
         for i in range(1, num_cylinders + 1):
@@ -95,7 +109,9 @@ class WorkIntegral(ThreeDScene):
         self.wait(2)
 
         for cylinder in cylinder_list:
-            self.play(cylinder.animate.shift(-2.5*LEFT), run_time=0.5)
+            self.play(cylinder.animate.shift(2.5*RIGHT), run_time=0.5)
+
+        #make all by one cylinder transparent 
 
 
 
