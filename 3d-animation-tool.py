@@ -63,11 +63,15 @@ class WorkIntegral(ThreeDScene):
         def updater(obj):
             obj.become(obj.initial_state)
             obj.rotate(rotate_tracker.get_value(), axis=OUT, about_point=axes.c2p(0,0,7))
-
+        
+        def brace_obj(point1, point2):
+            brace = BraceBetweenPoints(axes.c2p(*point1), axes.c2p(*point2)).rotate(90*DEGREES, axis=UP, about_point=axes.c2p(*point1))
+            return brace
 
         brace = BraceBetweenPoints(axes.c2p(0,0,line_function(1.75)[2]), axes.c2p(*line_function(1.75))).rotate(90*DEGREES, axis=UP, about_point=axes.c2p(0,0,line_function(1.75)[2]))
         radius_text = MathTex('Radius').set_color(BLUE).next_to(brace, IN).rotate(90*DEGREES, axis=UP).scale(0.5).rotate(90*DEGREES, axis=RIGHT)
         equation = MathTex(r'h = 5/2 r + 7')
+        equation2 = MathTex(r'r = 2/5*(h-7)')
 
         self.set_camera_orientation(phi=90 * DEGREES, theta=0*DEGREES, zoom=0.75, focal_distance=200)
 
@@ -87,6 +91,7 @@ class WorkIntegral(ThreeDScene):
 
         self.move_camera(phi=60*DEGREES, theta=-45*DEGREES, zoom=0.75, focal_distance=200)
 
+        self.play(Unwrite(equation))
         self.play(rotate_tracker.animate.set_value(2*PI))
 
         self.wait(2)
@@ -96,7 +101,7 @@ class WorkIntegral(ThreeDScene):
     
         self.move_camera(phi=40 * DEGREES, theta=-60 * DEGREES, gamma=0*DEGREES, zoom=0.75, focal_distance=200)
 
-        num_cylinders = 7
+        num_cylinders = 10
         cylinder_list = []
         for i in range(1, num_cylinders + 1):
             height = (5/num_cylinders)*i
@@ -113,12 +118,35 @@ class WorkIntegral(ThreeDScene):
 
         self.move_camera(phi=90 * DEGREES, theta=0*DEGREES, zoom=0.75, focal_distance=200)
 
-        temp_group = VGroup(*cylinder_list[0:-1])
+        temp_group = VGroup(*cylinder_list)
         self.play(cone.animate.set_opacity(0))
-        self.play(temp_group.animate.set_opacity(0.01))
-        
+        self.play(temp_group[-1].animate.set_opacity(1))
+        self.play(temp_group[0:-1].animate.set_opacity(0.01))
+        for i in range(len(cylinder_list)-1):
+            self.play(temp_group[-i-1].animate.set_opacity(1), temp_group[-i].animate.set_opacity(0.01))
+            self.wait(1)
+
+        self.play(temp_group.animate.set_opacity(1))
+        self.wait(2)
         #make all by one cylinder transparent 
         #find the area for the cylinder on top
 
 
+        
+
+class Equation_Derivation(Scene):
+    def construct(self):
+        top_cylinder = MathTex(r'work = m * g * h').scale(0.5).to_edge(UP).shift(RIGHT)
+        top_cylinder2 = MathTex(r'work = \rho *', r'V',r'* g * h').scale(0.5).to_edge(UP).shift(RIGHT)
+        top_cylinder3 = MathTex(r'work = \rho * (\pi * R^2 * dh) * g * h').scale(0.5).to_edge(UP).shift(RIGHT)
+        givens = MathTex(r'dh = 0.5, h \in [7,15]')
+        work1 = MathTex(r'W = \rho * (\pi * R^2 * dh) * g * h')
+        self.play(Write(top_cylinder))
+        self.wait(2)
+        self.play(TransformMatchingShapes(top_cylinder, top_cylinder2))
+        self.wait(2)
+        self.play(TransformMatchingShapes(top_cylinder2, top_cylinder3))
+        self.wait(2)
+
+        
 
