@@ -101,17 +101,24 @@ class WorkIntegral(ThreeDScene):
         for i in range(1, num_cylinders + 1):
             height = (5/num_cylinders)*i
             height_prev = (5/num_cylinders)*(i-1)
-            radius =  (height_prev+height)/2*2/5
+            radius =  height_prev*2/5
             dx=5/num_cylinders
             cylinder_surface = Surface(lambda u,v: axes.c2p(*cylinder_slice(u,v,radius)), u_range=[height-dx/2+7,height+7 + dx/2], v_range=[0,2*PI], resolution=8)
             cylinder_list.append(cylinder_group(radius, height+7, dx))
             self.play(DrawBorderThenFill(cylinder_list[-1], run_time=0.75))
         self.wait(2)
 
-        for cylinder in cylinder_list:
-            self.play(cylinder.animate.shift(2.5*RIGHT), run_time=0.5)
+        #for cylinder in cylinder_list:
+        #    self.play(cylinder.animate.shift(2.5*RIGHT), run_time=0.5)
 
+        self.move_camera(phi=90 * DEGREES, theta=0*DEGREES, zoom=0.75, focal_distance=200)
+
+        temp_group = VGroup(*cylinder_list[0:-1])
+        self.play(cone.animate.set_opacity(0))
+        self.play(temp_group.animate.set_opacity(0.01))
+        
         #make all by one cylinder transparent 
+        #find the area for the cylinder on top
 
 
 
