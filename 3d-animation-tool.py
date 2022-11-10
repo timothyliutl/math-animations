@@ -122,6 +122,10 @@ class WorkIntegral(ThreeDScene):
         self.play(cone.animate.set_opacity(0))
         self.play(temp_group[-1].animate.set_opacity(1))
         self.play(temp_group[0:-1].animate.set_opacity(0.01))
+        radius_brace = brace_obj([0,0,line_function(2)[-1]], line_function(2))
+        self.play(Create(radius_brace))
+        self.wait(1)
+        self.play(Uncreate(radius_brace))
         for i in range(len(cylinder_list)-1):
             self.play(temp_group[-i-1].animate.set_opacity(1), temp_group[-i].animate.set_opacity(0.01))
             self.wait(1)
@@ -130,23 +134,92 @@ class WorkIntegral(ThreeDScene):
         self.wait(2)
         #make all by one cylinder transparent 
         #find the area for the cylinder on top
+        #adding more cylinders to show we can make this infinite to get closer to the true volume
+
+class ThreeDRotations(ThreeDScene):
+    def construct(self):
+        rotate_tracker = ValueTracker(0)
+        axes = ThreeDAxes()
+
+        def upperbound(t):
+            return np.array([t,4,0])
+
+        def lowerbound(t):
+            return np.array([t,t**2, 0])
+
+        def ub_shell(u,v):
+            return np.array([u, 4*cos(v), 4*sin(v)])
+        
+        def lb_shell(u,v):
+            return np.array([u, u**2*cos(v), u**2*sin(v)])
+
+        def updater(obj):
+            obj.become(obj.initial_state)
+            obj.rotate(rotate_tracker.get_value(), axis=RIGHT, about_point=axes.c2p(0,0,0))
+        
+        curve_ub = ParametricFunction(lambda t: axes.c2p(*upperbound(t)), t_range=[0,2])
+        curve_lb = ParametricFunction(lambda t: axes.c2p(*lowerbound(t)), t_range=[0,2])
+        surface_ub = Surface(lambda u,v: ub_shell(u,v), u_range=[0,2], v_range=[0,2*PI], resolution=8, checkerboard_colors=[ORANGE]).set_opacity(0.5)
+        surface_lb = Surface(lambda u,v: lb_shell(u,v), u_range=[0,2], v_range=[0,2*PI], resolution=8, checkerboard_colors=[ORANGE]).set_opacity(0.5)
+        area = axes.get_area(curve_ub, [0, 2], bounded_graph=curve_lb, color=BLUE, opacity=0.5)
+        curve_ub.initial_state = curve_ub.copy()
+        curve_lb.initial_state = curve_lb.copy()
+        area.initial_state = area.copy()
+
+
+        self.set_camera_orientation(phi=0*DEGREES, theta=-90*DEGREES, zoom=0.75, focal_distance=200)
+        self.play(Create(axes))
+        self.play(Create(curve_ub.add_updater(updater)))
+        self.play(Create(curve_lb.add_updater(updater)))
+        self.play(Create(area.add_updater(updater)))
+
+        self.move_camera(phi=45*DEGREES, theta=-45*DEGREES, zoom=0.75, focal_distance=200)
+        self.play(rotate_tracker.animate.set_value(2*PI), run_time = 2)
+        self.play(Create(surface_ub), Create(surface_lb))
+        self.begin_ambient_camera_rotation()
+        self.play(rotate_tracker.animate.set_value(6*PI), run_time = 10)
+
 
 
         
 
 class Equation_Derivation(Scene):
     def construct(self):
-        top_cylinder = MathTex(r'work = m * g * h').scale(0.5).to_edge(UP).shift(RIGHT)
-        top_cylinder2 = MathTex(r'work = \rho *', r'V',r'* g * h').scale(0.5).to_edge(UP).shift(RIGHT)
-        top_cylinder3 = MathTex(r'work = \rho * (\pi * R^2 * dh) * g * h').scale(0.5).to_edge(UP).shift(RIGHT)
-        givens = MathTex(r'dh = 0.5, h \in [7,15]')
-        work1 = MathTex(r'W = \rho * (\pi * R^2 * dh) * g * h')
+        top_cylinder = MathTex(r'W =', r'M', r' * g * h').scale(0.75).to_edge(UP).shift(RIGHT)
+        top_cylinder2 = MathTex(r'W = \rho *', r'V',r'* g * h').next_to(top_cylinder, DOWN).scale(0.7)
+        top_cylinder3 = MathTex(r'W = \rho * (\pi *', r'R^2', r'* dh) * g * h').next_to(top_cylinder2, DOWN).scale(0.7)
+        cylinder_volume = MathTex(r'V = \pi *', r'R^2', r'* dh').scale(0.75).to_corner(UL)
+        mass_formula = MathTex(r'M = \rho * V').scale(0.75).next_to(cylinder_volume, DOWN)
+        equation = MathTex(r'h = 5/2 r + 7').scale(0.7).next_to(mass_formula, DOWN)
+        equation2 = MathTex(r'R = 2/5*(h-7)').scale(0.7).next_to(equation, DOWN)
+        givens = MathTex(r'dh = 0.5, h \in [7,15]').next_to(equation2, DOWN).scale(0.7)
+        work1 = MathTex(r'W = \rho * (\pi *', r'R^2', r'* dh) * g * h').next_to(top_cylinder3, DOWN).scale(0.7)
+        work2 = MathTex(r'W = \rho * \pi * (2/5(h-7))^2 * g * h * dh').next_to(top_cylinder3, DOWN).scale(0.7)
+        rect1 = SurroundingRectangle(top_cylinder[1])
+        rect2 = SurroundingRectangle(mass_formula)
+        rect3 = SurroundingRectangle(top_cylinder2[1])
+        rect4 = SurroundingRectangle(cylinder_volume)
+        rect5 = SurroundingRectangle(top_cylinder3[1])
+        rect6 = SurroundingRectangle(equation2)
+
+        self.play(Write(cylinder_volume), Write(mass_formula), Write(equation), Write(equation2))
         self.play(Write(top_cylinder))
         self.wait(2)
-        self.play(TransformMatchingShapes(top_cylinder, top_cylinder2))
+        self.play(Create(rect1), Create(rect2))
+        self.play(Uncreate(rect1), Uncreate(rect2))
         self.wait(2)
-        self.play(TransformMatchingShapes(top_cylinder2, top_cylinder3))
+        self.play(TransformMatchingShapes(top_cylinder.copy(),top_cylinder2))
+        self.play(Create(rect3), Create(rect4))
+        self.play(Uncreate(rect3), Uncreate(rect4))
         self.wait(2)
+        self.play(TransformMatchingShapes(top_cylinder2.copy(),top_cylinder3))
+        self.wait(2)
+        self.play(Create(rect5), Create(rect6))
+        self.play(Uncreate(rect5), Uncreate(rect6))
+        self.play(TransformMatchingShapes(top_cylinder3.copy(),work2))
+
+        
+
 
         
 
