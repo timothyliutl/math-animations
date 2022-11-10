@@ -178,6 +178,7 @@ class ThreeDRotations(ThreeDScene):
         self.play(Create(surface_ub), Create(surface_lb))
         self.begin_ambient_camera_rotation(0.04)
         self.play(rotate_tracker.animate.set_value(6*PI), run_time = 10, rate_func=linear)
+        self.wait(3)
 
 # create rotation about another line
 
