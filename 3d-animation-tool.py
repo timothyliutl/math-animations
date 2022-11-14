@@ -182,6 +182,53 @@ class ThreeDRotations(ThreeDScene):
 
 # create rotation about another line
 
+class RotationAboutLine(ThreeDScene):
+    def construct(self):
+        rotate_tracker = ValueTracker(0)
+        axes = ThreeDAxes(x_range=[-8,8], y_range=[-8,8], z_range=[-8,8], x_length=10, y_length=10, z_length=10)
+        #need to make the scales all the same for this animation to work
+        def upperbound(t):
+            return np.array([t,5,0])
+
+        def lowerbound(t):
+            return np.array([t,-1*t**2 + 3*t, 0])
+
+        def ub_shell(u,v):
+            return np.array([u, cos(v)+6, sin(v)])
+        
+        def lb_shell(u,v):
+            return np.array([u, (6-(-u**2+3*u))*cos(v)+6, (6-(-u**2+3*u))*sin(v)])
+
+        def updater(obj):
+            obj.become(obj.initial_state)
+            obj.rotate(rotate_tracker.get_value(), axis=RIGHT, about_point=axes.c2p(0,6,0))
+
+        curve_ub = ParametricFunction(lambda t: axes.c2p(*upperbound(t)), t_range=[0,3])
+        curve_lb = ParametricFunction(lambda t: axes.c2p(*lowerbound(t)), t_range=[0,3])
+        curve_lr = ParametricFunction(lambda t: axes.c2p(t,6,0), t_range=[-5,5])
+        surface_ub = Surface(lambda u,v: axes.c2p(*ub_shell(u,v)), u_range=[0,3], v_range=[0,2*PI], resolution=8, checkerboard_colors=[ORANGE]).set_opacity(0.5)
+        surface_lb = Surface(lambda u,v: axes.c2p(*lb_shell(u,v)), u_range=[0,3], v_range=[0,2*PI], resolution=8, checkerboard_colors=[GREEN]).set_opacity(0.5)
+        area = axes.get_area(curve_ub, [0, 3], bounded_graph=curve_lb, color=BLUE, opacity=0.5)
+        curve_ub.initial_state = curve_ub.copy()
+        curve_lb.initial_state = curve_lb.copy()
+        area.initial_state = area.copy()
+
+
+        self.set_camera_orientation(phi=0*DEGREES, theta=-90*DEGREES, zoom=0.75, focal_distance=200)
+        self.play(Create(axes))
+        self.play(Create(curve_lr))
+        self.play(Create(curve_ub.add_updater(updater)))
+        self.play(Create(curve_lb.add_updater(updater)))
+        self.play(Create(area.add_updater(updater)))
+
+        self.move_camera(phi=60*DEGREES, theta=-60*DEGREES, zoom=0.75, focal_distance=200)
+        self.play(rotate_tracker.animate.set_value(2*PI), run_time = 2)
+        self.play(Create(surface_ub), Create(surface_lb))
+        self.begin_ambient_camera_rotation(0.04)
+        self.play(rotate_tracker.animate.set_value(6*PI), run_time = 10, rate_func=linear)
+        self.wait(3)
+
+
         
 
 class Equation_Derivation(Scene):
