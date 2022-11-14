@@ -8,14 +8,29 @@ The codebase uses Manim Community Edition 0.16.0. An installation guide can be f
 
 Once Manim Community Edition has been installed on the users computer, the animations can be created by entering the repository directory in the terminal and entering the following command:
 
-```manim manim-projects.py {ClassName} -pqm```
+```manim {FileName}.py {ClassName} -pqm```
 
 Where {ClassName} refers to the names of the classes in the python file. The animations will be saved locally in a folder called ```media``` and a video file of the animation will be opened.
 
 ## Animations used in APSC 171 Tutorials
 
+### Week 10
 
 
+https://user-images.githubusercontent.com/55731604/201589185-9e6412b7-cc5a-45d6-8de1-e73d433afa07.mp4
+
+
+
+https://user-images.githubusercontent.com/55731604/201589221-c1a13cb5-6a4d-46b9-a347-992e0b36b4cf.mp4
+
+
+
+https://user-images.githubusercontent.com/55731604/201589302-2c9e7884-0c0c-494a-acc7-bf2fd72e4659.mp4
+
+
+
+
+### Week 2
 https://user-images.githubusercontent.com/55731604/191881768-c61da87d-fb8c-4f9a-84ad-f81a6596f1b4.mp4
 
 
