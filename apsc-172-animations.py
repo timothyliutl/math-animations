@@ -37,25 +37,28 @@ class Spaghetti(ThreeDScene):
             return np.array([z_value * sin(t), z_value * cos(t), z_value**2])
 
         axes = ThreeDAxes(x_range=[-8,8], y_range=[-8,8], z_range=[-8,8], x_length=10, y_length=10, z_length=10)
-        surface = Surface(lambda u,v: axes.c2p(*surface_equation(u,v)), u_range=[-3,3], v_range=[-3,3], resolution=8, fill_opacity=0.3)
+        surface = Surface(lambda u,v: axes.c2p(*surface_equation(u,v)), u_range=[-3,3], v_range=[-3,3], resolution=8, fill_opacity=1)
 
         e = ValueTracker(0.01)
 
-        plane = always_redraw(lambda: Surface(lambda u,v: axes.c2p(u,v,e.get_value()), u_range=[-4,4], v_range=[-4,4], fill_opacity=0.4, checkerboard_colors=[ORANGE, ORANGE], resolution=8))
+        plane = always_redraw(lambda: Surface(lambda u,v: axes.c2p(u,v,e.get_value()), u_range=[-6,6], v_range=[-6,6], fill_opacity=0.4, checkerboard_colors=[ORANGE, ORANGE], resolution=8))
         curve1 = ParametricFunction(lambda t: axes.c2p(*parametric_curve(sqrt(2), t)), t_range=[0, 2*PI])
 
-        self.set_camera_orientation(phi=45*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
+        self.set_camera_orientation(phi=75*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
         self.play(Create(axes))
         self.play(Create(surface))
-        self.begin_ambient_camera_rotation(0.44)
+        self.begin_ambient_camera_rotation(0.04)
         self.play(Create(plane))
 
-        for i in range(10):
+        for i in range(5):
             self.play(e.animate.set_value(i))
-            curve = ParametricFunction(lambda t: axes.c2p(*parametric_curve(sqrt(1), t)), t_range=[0, 2*PI])
+            curve = ParametricFunction(lambda t: axes.c2p(*parametric_curve(sqrt(i), t)), t_range=[0, 2*PI])
             self.play(Create(curve))
-            self.wait(0.3)
+            self.wait(0.2)
 
-        self.wait(5)
-
+        self.wait(2)
+        self.move_camera(phi=0*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
+        self.wait(0.2)
+        self.play(plane.animate.set_opacity(0), surface.animate.set_opacity(0))
+        self.wait(0.2)
 
