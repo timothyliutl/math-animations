@@ -43,17 +43,25 @@ class Spaghetti(ThreeDScene):
 
         plane = always_redraw(lambda: Surface(lambda u,v: axes.c2p(u,v,e.get_value()), u_range=[-6,6], v_range=[-6,6], fill_opacity=0.4, checkerboard_colors=[ORANGE, ORANGE], resolution=8))
         curve1 = ParametricFunction(lambda t: axes.c2p(*parametric_curve(sqrt(2), t)), t_range=[0, 2*PI])
+        decimal = DecimalNumber(0, 2).to_corner(RIGHT+DOWN).scale(1.2)
+        text = Text("Z = ").next_to(decimal, LEFT).scale(1.2)
 
         self.set_camera_orientation(phi=75*DEGREES, theta=45*DEGREES, zoom=0.75, focal_distance=200)
+        self.add_fixed_in_frame_mobjects(decimal)
+        self.add_fixed_in_frame_mobjects(text)
         self.play(Create(axes))
         self.play(Create(surface))
         self.begin_ambient_camera_rotation(0.04)
-        self.play(Create(plane))
+        self.play(Create(plane), Write(decimal), Write(text))
+        self.wait(2)
 
-        for i in range(5):
+
+        for i in range(1,7):
             self.play(e.animate.set_value(i))
             curve = ParametricFunction(lambda t: axes.c2p(*parametric_curve(sqrt(i), t)), t_range=[0, 2*PI])
-            self.play(Create(curve))
+            self.add_fixed_in_frame_mobjects(decimal)
+            self.play(Create(curve), decimal.animate.set_value(e.get_value()), run_time = 0.5)
+            self.add_fixed_in_frame_mobjects(decimal)
             self.wait(0.2)
 
         self.wait(2)
